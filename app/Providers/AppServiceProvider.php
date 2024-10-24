@@ -14,10 +14,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Bind your service to the container
-        $this->app->singleton(SuperAdminApiService::class, function () {
-            return new SuperAdminApiService();
-        });
+        if (!is_null(env('API_URL')) && !is_null(env('RESTAURANT_URL'))) {
+            // Bind your service to the container
+            $this->app->singleton(SuperAdminApiService::class, function () {
+                return new SuperAdminApiService();
+            });
+        }
     }
 
     /**
@@ -25,21 +27,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Instantiate your service
-        $apiService = App::make(SuperAdminApiService::class);
+        if (!is_null(env('API_URL')) && !is_null(env('RESTAURANT_URL'))) {
+            // Instantiate your service
+            $apiService = App::make(SuperAdminApiService::class);
 
-        // Perform the API request
-        $data = $apiService->requestData();
+            // Perform the API request
+            $data = $apiService->requestData();
 
-        // Check if data is null
-        if (is_null($data)) {
-            // Throw your custom exception
-            throw new ApiDataException('Failed to retrieve data. Application cannot continue.');
+            // Check if data is null
+            if (is_null($data)) {
+                // Throw your custom exception
+                throw new ApiDataException('Failed to retrieve data. Application cannot continue.');
+            }
+
+            // Bind the data to the service container
+            $this->app->singleton('api.data', function () use ($data) {
+                return $data;
+            });
         }
-
-        // Bind the data to the service container
-        $this->app->singleton('api.data', function () use ($data) {
-            return $data;
-        });
     }
 }
