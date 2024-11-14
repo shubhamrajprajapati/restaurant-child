@@ -11,8 +11,8 @@ class Helpers
     {
         $place_holders = [
             'default' => asset('assets/img/favicon/favicon.png'),
-            'logos' => asset('assets/img/logo/logo.png'),
-            'favicons' => asset('assets/img/favicon/favicon.png'),
+            'logo' => asset('assets/img/logo/logo.png'),
+            'favicon' => asset('assets/img/favicon/favicon.png'),
         ];
 
         try {
@@ -28,7 +28,7 @@ class Helpers
         }
 
         if ($data && Storage::disk('public')->exists($path . '/' . $data)) {
-            return asset('storage/app/public') . '/' . $path . '/' . $data;
+            return asset('storage') . '/' . $path . '/' . $data;
         }
 
         if (Request::is('api/*')) {
