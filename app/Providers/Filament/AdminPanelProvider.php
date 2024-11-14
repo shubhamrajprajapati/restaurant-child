@@ -76,6 +76,7 @@ class AdminPanelProvider extends PanelProvider
             ->spaUrlExceptions([
                 // '*/admin/posts/*',
             ])
-            ->unsavedChangesAlerts();
+            ->unsavedChangesAlerts()
+            ->sidebarCollapsibleOnDesktop();
     }
 }
