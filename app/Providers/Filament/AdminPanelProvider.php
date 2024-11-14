@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\CentralLogics\Helpers;
 use App\Models\Restaurant;
 use App\Services\SuperAdminApiService;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -79,6 +80,7 @@ class AdminPanelProvider extends PanelProvider
                 // '*/admin/posts/*',
             ])
             ->unsavedChangesAlerts()
-            ->sidebarCollapsibleOnDesktop();
+            ->sidebarCollapsibleOnDesktop()
+            ->defaultThemeMode(ThemeMode::Dark);
     }
 }
