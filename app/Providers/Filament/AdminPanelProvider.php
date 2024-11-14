@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\CentralLogics\Helpers;
+use App\Models\Restaurant;
+use App\Services\SuperAdminApiService;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -22,11 +25,22 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $superAdminApiService = new SuperAdminApiService();
+        $restaurantDetailFromSuperAdminPanel = $superAdminApiService->requestData();
+
+        $restaurantData = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
+
         return $panel
             ->default()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->id('admin')
             ->path('admin')
+
+            ->brandName(fn() => $restaurantData['name'] ?? config('app.name'))
+            ->favicon(fn() => Helpers::get_full_url(null,$restaurantData['logo_full_url'],'public', 'favicon'))
+            ->brandLogo(fn() => Helpers::get_full_url(null,$restaurantData['logo_full_url'],'public', 'logo'))
+            ->brandLogoHeight('2rem')
+
             ->login()
             ->registration()
             ->passwordReset()
