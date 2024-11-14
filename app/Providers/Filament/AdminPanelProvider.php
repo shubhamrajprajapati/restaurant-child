@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->spaUrlExceptions([
                 // '*/admin/posts/*',
-            ]);
+            ])
+            ->unsavedChangesAlerts();
     }
 }
