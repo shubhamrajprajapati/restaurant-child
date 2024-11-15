@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
@@ -26,6 +28,7 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'otp',
+        'role',
     ];
 
     /**
@@ -48,13 +51,18 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
+            'role' => UserRoleEnum::class,
             'password' => 'hashed',
             'otp' => 'integer',
         ];
     }
 
+    /**
+     * This function will gives access filament admin panel
+     *  to that user who matches this condition
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->can('view-admin-panel', User::class);
     }
 }
