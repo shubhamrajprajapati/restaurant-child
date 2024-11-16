@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'api_url' => env('API_URL', 'https://menuempire.com'), // Manual Changes
+
+    'restaurant_url' => env('RESTAURANT_URL', env('APP_URL')), // Manual Changes
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

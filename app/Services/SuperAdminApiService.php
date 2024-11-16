@@ -12,8 +12,8 @@ class SuperAdminApiService
 
     public function __construct()
     {
-        $this->baseUrl = env('API_URL'); // Load from .env
-        $this->appUrl = env('RESTAURANT_URL', config('app.url')); // Load from env otherwise config
+        $this->baseUrl = config('app.api_url');
+        $this->appUrl = config('app.restaurant_url');
     }
 
     public function requestData()
