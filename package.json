@@ -1,9 +1,11 @@
 {
+    "name": "restaurant-child-app",
     "private": true,
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "install-reset": "npm install && git checkout -- package-lock.json"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.9",
