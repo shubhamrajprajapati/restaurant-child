@@ -93,10 +93,10 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon {
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::ADMIN => 'heroicon-o-shield-check',
+            self::ADMIN => 'heroicon-m-shield-check',
             // self::EDITOR => 'heroicon-o-users',
             // self::CONTsRIBUTOR => 'heroicon-o-user-group',
-            self::USER => 'heroicon-o-user',
+            self::USER => 'heroicon-m-user',
         };
     }
 

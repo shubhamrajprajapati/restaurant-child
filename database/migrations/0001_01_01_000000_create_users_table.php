@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,11 +17,16 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique()->nullable();
             $table->string('email')->unique();
+            $table->string('role')->default(UserRoleEnum::default()->value);
+            $table->mediumText('address')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
             $table->string('otp', 6)->nullable();
             $table->rememberToken();
+
+            $table->softDeletes();
+            
             $table->timestamps();
         });
 

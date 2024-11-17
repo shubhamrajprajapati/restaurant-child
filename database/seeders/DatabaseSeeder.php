@@ -15,19 +15,20 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+        User::factory()->create([
+            'name' => 'Restaurant Admin',
+            'email' => 'super-admin@menuempire.com',
+            'role' => UserRoleEnum::ADMIN->value,
+            'address' => 'Mumbai, India',
+            'password' => 'Rakesh@123',
+        ]);
 
         User::factory()->create([
             'name' => 'Shubham Raj',
             'email' => 'shubhambth0000@gmail.com',
             'role' => UserRoleEnum::ADMIN->value,
+            'address' => 'Hariwatika Chowk, Bettiah, Bihar, India - 845438',
             'password' => 'Shubham@123',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Restaurant Admin',
-            'email' => 'super-admin@menuempire.com',
-            'role' => UserRoleEnum::ADMIN->value,
-            'password' => 'Rakesh@123',
         ]);
 
         // $this->call(RestaurantSeeder::class);
