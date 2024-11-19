@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->mediumText('description');
             $table->string('domain')->unique();
+            $table->string('favicon')->nullable();
             $table->string('logo')->nullable();
 
             $table->string('installation_token')->unique();
@@ -35,6 +36,12 @@ return new class extends Migration
             $table->string('shutdown_msg')->nullable();
 
             $table->unsignedSmallInteger('order_column')->nullable();
+
+            $table->json('emails')->nullable();
+            $table->json('telephones')->nullable();
+            $table->json('addresses')->nullable();
+
+            $table->string('geo_location_link')->nullable();
 
             $table->json('other_details')->nullable();
 

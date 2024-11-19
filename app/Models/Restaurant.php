@@ -3,24 +3,25 @@
 namespace App\Models;
 
 use App\CentralLogics\Helpers;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Restaurant extends Model implements Sortable
 {
     use HasFactory, HasUuids, SoftDeletes, SortableTrait;
 
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'name',
         'description',
         'domain',
+        'favicon',
         'logo',
 
         'installation_token',
@@ -40,6 +41,12 @@ class Restaurant extends Model implements Sortable
 
         'order_column',
 
+        'emails',
+        'telephones',
+        'addresses',
+
+        'geo_location_link',
+
         'other_details',
 
         'updated_by_user_id',
@@ -58,18 +65,28 @@ class Restaurant extends Model implements Sortable
 
         'order_column' => 'integer',
 
+        'emails' => 'array',
+        'telephones' => 'array',
+        'addresses' => 'array',
+
         'other_details' => 'array',
     ];
 
     protected $appends = [
+        'favicon_full_url',
         'logo_full_url',
     ];
 
-    public function getLogoFullUrlAttribute(){
+    public function getLogoFullUrlAttribute()
+    {
         $value = $this->logo;
-        return Helpers::get_full_url(null,$value,'public', 'logos');
+        return Helpers::get_full_url(null, $value, 'public', 'logo');
     }
-
+    public function getFaviconFullUrlAttribute()
+    {
+        $value = $this->favicon;
+        return Helpers::get_full_url(null, $value, 'public', 'favicon');
+    }
 
     public function creator(): BelongsTo
     {
