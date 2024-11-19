@@ -101,45 +101,167 @@ class RestaurantDetails extends Page
                             ->columns(12)
                             ->schema([
                                 Forms\Components\Hidden::make('installation_token'),
-                                Forms\Components\Fieldset::make('Restaurant Logo')
-                                    ->columnSpan(['lg' => 3])
+                                Forms\Components\Section::make('Restaurant Logo Upload')
+                                    ->icon('heroicon-o-photo')
+                                    ->description('Upload the logo of the restaurant. This will be displayed in the header and other areas of the application.')
+                                    ->compact()
+                                    ->collapsible()
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->columnSpan(['lg' => 6])
                                     ->schema([
                                         Forms\Components\FileUpload::make('logo')
+                                            ->inlineLabel()
+                                            ->label('Restaurant Logo')
                                             ->extraAttributes(['class' => 'mx-auto'])
                                             ->disk('public')
-                                            ->directory('restaurant-logos')
+                                            ->directory('logo')
                                             ->avatar()
                                             ->image()
-                                            ->hiddenLabel()
                                             ->imageEditor()
                                             ->circleCropper()
-                                            ->required()
                                             ->maxSize(1024)
                                             ->downloadable()
-                                            ->openable()
-                                            ->columnSpanFull(),
+                                            ->openable(),
                                     ]),
-                                Forms\Components\Fieldset::make('Restaurant Name & Domain Url')
-                                    ->columns(['lg' => 12])
-                                    ->columnSpan(['lg' => 9])
+
+                                Forms\Components\Section::make('Restaurant Favicon Upload')
+                                    ->icon('heroicon-o-bookmark')
+                                    ->description('Upload the favicon of the restaurant. This will appear as the website icon in browser tabs.')
+                                    ->compact()
+                                    ->collapsible()
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->columnSpan(['lg' => 6])
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('favicon')
+                                            ->inlineLabel()
+                                            ->label('Restaurant Favicon')
+                                            ->extraAttributes(['class' => 'mx-auto'])
+                                            ->disk('public')
+                                            ->directory('favicon')
+                                            ->avatar()
+                                            ->image()
+                                            ->imageEditor()
+                                            ->circleCropper()
+                                            ->maxSize(1024)
+                                            ->downloadable()
+                                            ->openable(),
+                                    ]),
+
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->columnSpan(['lg' => 12])
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
-                                            ->hiddenLabel()
+                                            ->label('Restaurant Name')
+                                            ->inlineLabel()
+                                            ->prefixIcon('heroicon-o-building-storefront')
+                                            ->prefixIconColor('primary')
                                             ->placeholder('Restaurant Name')
                                             ->required()
                                             ->maxLength(255)
                                             ->columnSpanFull(),
+                                        Forms\Components\Hidden::make('description'),
+                                        Forms\Components\Textarea::make('description')
+                                            ->label('Restaurant Description')
+                                            ->inlineLabel()
+                                            ->required()
+                                            ->autosize()
+                                            ->columnSpanFull()
+                                            ->hidden(),
+                                        Forms\Components\Hidden::make('domain'),
                                         Forms\Components\TextInput::make('domain')
-                                            ->hiddenLabel()
+                                            ->label('Restaurant Domain')
+                                            ->inlineLabel()
                                             ->placeholder('Restaurant Domain Url')
                                             ->required()
                                             ->maxLength(255)
+                                            ->columnSpanFull()
+                                            ->hidden(),
+                                    ]),
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->columnSpan(['lg' => 6])
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->schema([
+                                        Forms\Components\Repeater::make('emails')
+                                            ->collapsible()
+                                            ->reorderableWithButtons()
+                                            ->columnSpanFull()
+                                            ->label('Restaurant Emails')
+                                            ->inlineLabel()
+                                            ->maxItems(5)
+                                            ->simple(
+                                                Forms\Components\TextInput::make('email')
+                                                    ->hiddenLabel()
+                                                    ->placeholder('Email')
+                                                    ->required()
+                                                    ->prefixIcon('heroicon-m-at-symbol')
+                                                    ->prefixIconColor('primary')
+                                                    ->email()
+                                                    ->maxLength(255)
+                                                    ->columnSpanFull(),
+                                            ),
+                                    ]),
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->columnSpan(['lg' => 6])
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->schema([
+                                        Forms\Components\Repeater::make('telephones')
+                                            ->collapsible()
+                                            ->reorderableWithButtons()
+                                            ->columnSpanFull()
+                                            ->label('Restaurant Telephones')
+                                            ->inlineLabel()
+                                            ->maxItems(5)
+                                            ->simple(
+                                                Forms\Components\TextInput::make('telephone')
+                                                    ->hiddenLabel()
+                                                    ->placeholder('Phone')
+                                                    ->required()
+                                                    ->prefixIcon('heroicon-m-phone')
+                                                    ->prefixIconColor('primary')
+                                                    ->tel()
+                                                    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+                                                    ->columnSpanFull(),
+                                            ),
+                                    ]),
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->columnSpan(['lg' => 12])
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->schema([
+                                        Forms\Components\Repeater::make('addresses')
+                                            ->collapsible()
+                                            ->reorderableWithButtons()
+                                            ->columnSpanFull()
+                                            ->label('Restaurant Addresses')
+                                            ->inlineLabel()
+                                            ->maxItems(6)
+                                            ->simple(
+                                                Forms\Components\TextInput::make('address')
+                                                    ->hiddenLabel()
+                                                    ->placeholder('Address')
+                                                    ->required()
+                                                    ->prefixIcon('heroicon-o-map-pin')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpanFull(),
+                                            ),
+                                    ]),
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->columnSpan(['lg' => 12])
+                                    ->schema([
+                                        Forms\Components\TextInput::make('address')
+                                            ->label('Geo Location Link')
+                                            ->inlineLabel()
+                                            ->placeholder('e.g.; https://g.co/kgs/i9TkqjD')
+                                            ->prefixIcon('heroicon-m-link')
+                                            ->prefixIconColor('primary')
                                             ->columnSpanFull(),
                                     ]),
-                                Forms\Components\Textarea::make('description')
-                                    ->required()
-                                    ->autosize()
-                                    ->columnSpanFull(),
                                 Forms\Components\Fieldset::make('Restaurant App Installation Status')
                                     ->hidden()
                                     ->columns(['lg' => 3])
