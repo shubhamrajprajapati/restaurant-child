@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\RestaurantDetails;
 use App\Filament\Resources\UserResource;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -19,7 +20,7 @@ class MenuStatsOverview extends BaseWidget
         return [
             // Rows of 3, alternating between design 1 and design 2
             ['label' => 'Users', 'icon' => 'user-group', 'design' => 'bg-gradient-cursor-design-1', 'url' => UserResource::getUrl()],
-            ['label' => 'Restaurant Name', 'icon' => 'building-storefront', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
+            ['label' => 'Restaurant Details', 'icon' => 'building-storefront', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl()],
             ['label' => 'Homepage Edits', 'icon' => 'pencil-square', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
 
             ['label' => 'Rolling Message', 'icon' => 'chat-bubble-left', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
