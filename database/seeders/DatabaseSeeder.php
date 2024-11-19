@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
             'password' => 'Shubham@123',
         ]);
 
+        $this->call(PageEditSeeder::class);
+
         // $this->call(RestaurantSeeder::class);
 
     }
