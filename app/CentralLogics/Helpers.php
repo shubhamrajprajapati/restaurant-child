@@ -11,7 +11,7 @@ class Helpers
     {
         $place_holders = [
             'default' => asset('assets/img/favicon/favicon.png'),
-            'logo' => asset('assets/img/logo/logo.png'),
+            'logo' => asset('assets/img/logos/logo.png'),
             'favicon' => asset('assets/img/favicon/favicon.png'),
         ];
 
