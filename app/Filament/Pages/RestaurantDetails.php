@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Restaurant;
+use App\Traits\FilamentCustomPageAuthorization;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +13,9 @@ use Filament\Pages\Page;
 
 class RestaurantDetails extends Page
 {
+    use FilamentCustomPageAuthorization;
     protected static string $resource = Restaurant::class;
+    protected static ?string $model = Restaurant::class;
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
@@ -50,6 +53,7 @@ class RestaurantDetails extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
+                ->authorize(static::canEdit($this->record))
                 ->formId('restaurant_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
