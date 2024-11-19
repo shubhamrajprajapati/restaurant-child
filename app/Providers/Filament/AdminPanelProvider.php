@@ -38,8 +38,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
 
             ->brandName(fn() => $restaurantData['name'] ?? config('app.name'))
-            ->favicon(fn() => Helpers::get_full_url(null,$restaurantData['favicon_full_url'],'public', 'favicon'))
-            ->brandLogo(fn() => Helpers::get_full_url(null,$restaurantData['logo_full_url'],'public', 'logo'))
+            ->favicon(fn() => Helpers::get_full_url(null,$restaurantData['favicon_full_url'] ?? null,'public', 'favicon'))
+            ->brandLogo(fn() => Helpers::get_full_url(null,$restaurantData['logo_full_url'] ?? null,'public', 'logo'))
             ->brandLogoHeight('2rem')
 
             ->login()
