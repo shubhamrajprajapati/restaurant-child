@@ -106,7 +106,8 @@ class RestaurantDetails extends Page
                                     ->description('Upload the logo of the restaurant. This will be displayed in the header and other areas of the application.')
                                     ->compact()
                                     ->collapsible()
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->collapsed()
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->columnSpan(['lg' => 6])
                                     ->schema([
                                         Forms\Components\FileUpload::make('logo')
@@ -129,7 +130,8 @@ class RestaurantDetails extends Page
                                     ->description('Upload the favicon of the restaurant. This will appear as the website icon in browser tabs.')
                                     ->compact()
                                     ->collapsible()
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->collapsed()
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->columnSpan(['lg' => 6])
                                     ->schema([
                                         Forms\Components\FileUpload::make('favicon')
@@ -149,7 +151,7 @@ class RestaurantDetails extends Page
 
                                 Forms\Components\Section::make('')
                                     ->compact()
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->columnSpan(['lg' => 12])
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
@@ -182,7 +184,7 @@ class RestaurantDetails extends Page
                                 Forms\Components\Section::make('')
                                     ->compact()
                                     ->columnSpan(['lg' => 6])
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->schema([
                                         Forms\Components\Repeater::make('emails')
                                             ->collapsible()
@@ -206,7 +208,7 @@ class RestaurantDetails extends Page
                                 Forms\Components\Section::make('')
                                     ->compact()
                                     ->columnSpan(['lg' => 6])
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->schema([
                                         Forms\Components\Repeater::make('telephones')
                                             ->collapsible()
@@ -230,7 +232,7 @@ class RestaurantDetails extends Page
                                 Forms\Components\Section::make('')
                                     ->compact()
                                     ->columnSpan(['lg' => 12])
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->schema([
                                         Forms\Components\Repeater::make('addresses')
                                             ->collapsible()
@@ -251,7 +253,7 @@ class RestaurantDetails extends Page
                                     ]),
                                 Forms\Components\Section::make('')
                                     ->compact()
-                                    ->extraAttributes(['class' => 'bg-slate-300/30 dark:bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
                                     ->columnSpan(['lg' => 12])
                                     ->schema([
                                         Forms\Components\TextInput::make('address')

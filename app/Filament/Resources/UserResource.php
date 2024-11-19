@@ -43,7 +43,7 @@ class UserResource extends Resource
                     ->icon('heroicon-m-user-circle')
                     ->iconColor('primary')
                     ->description('Provide the basic personal details, such as name, email, and contact information.')
-                    ->extraAttributes(['class' => 'bg-blue-300/20 dark:bg-blue-400/5'])
+                    ->extraAttributes(['class' => '!bg-blue-300/20 dark:!bg-blue-400/5'])
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->inlineLabel()
@@ -91,7 +91,7 @@ class UserResource extends Resource
                         ? 'Set up a secure password to protect the account.'
                         : 'Change the password to keep the account secure.'
                     )
-                    ->extraAttributes(['class' => 'bg-green-300/20 dark:bg-green-400/5'])
+                    ->extraAttributes(['class' => '!bg-green-300/20 dark:!bg-green-400/5'])
                     ->columnSpan(['lg' => 1])
                     ->schema([
                         Forms\Components\TextInput::make('password')
@@ -137,7 +137,7 @@ class UserResource extends Resource
                     ->icon('heroicon-m-document-text')
                     ->iconColor('secondary')
                     ->description('Provide any additional information, such as address.')
-                    ->extraAttributes(['class' => 'bg-slate-300/40 dark:bg-slate-500/10'])
+                    ->extraAttributes(['class' => '!bg-slate-300/40 dark:!bg-slate-500/10'])
                     ->columnSpan(['lg' => 1])
                     ->schema([
                         Forms\Components\Textarea::make('address')
