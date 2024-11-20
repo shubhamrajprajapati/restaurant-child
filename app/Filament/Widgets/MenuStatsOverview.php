@@ -41,7 +41,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Holiday', 'icon' => 'stop', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
 
             ['label' => 'Scripts', 'icon' => 'document-text', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
-            ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],
             ['label' => 'Reservations/Order', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
         ];
 

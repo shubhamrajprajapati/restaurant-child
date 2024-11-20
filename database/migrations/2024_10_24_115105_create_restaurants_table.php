@@ -41,6 +41,18 @@ return new class extends Migration
             $table->json('telephones')->nullable();
             $table->json('addresses')->nullable();
 
+            $table->json('rolling_messages')->nullable();
+            $table->json('testimonials')->nullable();
+            $table->json('opening_hours')->nullable();
+            $table->json('meta_details')->nullable();
+            $table->json('social_links')->nullable();
+            $table->json('custom_social_links')->nullable();
+            $table->json('color_theme')->nullable();
+            $table->json('designs')->nullable();
+            $table->json('scripts')->nullable();
+
+            $table->string('timezone')->default('UTC')->nullable();
+
             $table->string('geo_location_link')->nullable();
 
             $table->json('other_details')->nullable();

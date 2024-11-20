@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Models\Restaurant;
 use App\Traits\FilamentCustomPageAuthorization;
+use DateTime;
+use DateTimeZone;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,6 +38,11 @@ class RestaurantDetails extends Page
             $data['other_details'] = json_decode($data['other_details'], true);
         }
 
+        // Set default value for timezone
+        if (!isset($data['timezone'])) {
+            $data['timezone'] = config('app.timezone');
+        }
+
         $this->data = $data;
         $this->form->fill($this->data);
     }
@@ -53,7 +60,7 @@ class RestaurantDetails extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(static::canEdit($this->record))
+                ->authorize(empty($this->record) ? true: static::canEdit($this->record))
                 ->formId('restaurant_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -288,6 +295,32 @@ class RestaurantDetails extends Page
                                             ->label('Installed')
                                             ->helperText('Toggle to indicate if the Restaurant App is installed. If the installation is incomplete, switch off to enable the installation button in the system check. This option is intended for debugging and processing manual installations.')
                                             ->columnSpanFull(),
+                                    ]),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Timezone')
+                            ->schema([
+                                Forms\Components\Section::make('')
+                                    ->compact()
+                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                    ->columnSpan(['lg' => 12])
+                                    ->schema([
+                                        Forms\Components\Select::make('timezone')
+                                            ->label('Timezone')
+                                            ->options(collect(DateTimeZone::listIdentifiers())->mapWithKeys(function ($timezone) {
+                                                $dateTimeZone = new DateTimeZone($timezone);
+                                                $dateTime = new DateTime('now', $dateTimeZone);
+                                                $offset = $dateTimeZone->getOffset($dateTime);
+                                                $formattedOffset = sprintf('%+03d:%02d', $offset / 3600, abs($offset % 3600) / 60);
+
+                                                return [$timezone => "(UTC $formattedOffset) $timezone"];
+                                            }))
+                                            ->placeholder('Select timezone')
+                                            ->inlineLabel()
+                                            ->searchable()
+                                            ->native(false)
+                                            ->preload()
+                                            ->default(config('app.timezone'))
+                                            ->required(),
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')

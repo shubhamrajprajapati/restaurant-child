@@ -45,6 +45,18 @@ class Restaurant extends Model implements Sortable
         'telephones',
         'addresses',
 
+        'rolling_messages',
+        'testimonials',
+        'opening_hours',
+        'meta_details',
+        'social_links',
+        'custom_social_links',
+        'color_theme',
+        'designs',
+        'scripts',
+
+        'timezone',
+
         'geo_location_link',
 
         'other_details',
@@ -68,6 +80,16 @@ class Restaurant extends Model implements Sortable
         'emails' => 'array',
         'telephones' => 'array',
         'addresses' => 'array',
+
+        'rolling_messages' => 'array',
+        'testimonials' => 'array',
+        'opening_hours' => 'array',
+        'meta_details' => 'array',
+        'social_links' => 'array',
+        'custom_social_links' => 'array',
+        'color_theme' => 'array',
+        'designs' => 'array',
+        'scripts' => 'array',
 
         'other_details' => 'array',
     ];
