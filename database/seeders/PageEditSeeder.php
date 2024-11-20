@@ -13,6 +13,6 @@ class PageEditSeeder extends Seeder
      */
     public function run(): void
     {
-        PageEdit::factory()->count(3)->create();
+        PageEdit::factory()->count(1)->create();
     }
 }
