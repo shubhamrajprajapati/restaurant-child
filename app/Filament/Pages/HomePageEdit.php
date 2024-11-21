@@ -20,14 +20,14 @@ class HomePageEdit extends Page
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.home-page-edit';
     private static string $key = 'home_page';
-    protected $record;
+    protected ?PageEdit $record;
     public ?array $data = [];
 
     public function mount()
     {
-        $this->record = PageEdit::where(['key' => static::$key])?->first()?->first()?->toArray();
+        $this->record = PageEdit::where(['key' => static::$key])?->first();
 
-        $this->data = $this->record;
+        $this->data = $this->record?->toArray();
         // Convert other_details to array if it's a JSON
         if (isset($this->data['value']) && !is_array($this->data['value'])) {
             $this->data['value'] = json_decode($this->data['value'], true);
@@ -49,7 +49,7 @@ class HomePageEdit extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(fn() => empty($this->record) ? true: static::canEdit($this->record))
+                ->authorize(fn() => empty($this->record) ? static::canCreate(): static::canEdit($this->record))
                 ->formId('homepage_edit_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -157,7 +157,7 @@ class HomePageEdit extends Page
                                             ->directory('page_customization')
                                             ->image()
                                             ->imageEditor()
-                                            ->maxSize(1024*5)
+                                            ->maxSize(1024 * 5)
                                             ->downloadable()
                                             ->openable(),
                                     ]),

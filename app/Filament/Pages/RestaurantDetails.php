@@ -22,14 +22,14 @@ class RestaurantDetails extends Page
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.restaurant-details';
-    protected $record;
+    protected ?Restaurant $record;
     public ?array $data = [];
 
     public function mount()
     {
         $restaurantDetailFromSuperAdminPanel = app('api.data');
 
-        $this->record = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])->first();
+        $this->record = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first();
 
         $data = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
 
@@ -60,7 +60,7 @@ class RestaurantDetails extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(empty($this->record) ? true: static::canEdit($this->record))
+                ->authorize(empty($this->record) ? static::canCreate(): static::canEdit($this->record))
                 ->formId('restaurant_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
