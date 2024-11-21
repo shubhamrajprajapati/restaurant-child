@@ -12,6 +12,9 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Request;
+use Livewire\Attributes\Url;
 
 class RestaurantDetails extends Page
 {
@@ -24,6 +27,22 @@ class RestaurantDetails extends Page
     protected static string $view = 'filament.pages.restaurant-details';
     protected ?Restaurant $record;
     public ?array $data = [];
+
+    public function getTitle(): string | Htmlable
+    {
+        $customTitle = match (Request::query('tab')) {
+            '-testimonials-tab' => 'Reviews',
+            '-timezone-tab' => 'Timezone',
+
+            default => static::$title ?? (string) str(class_basename(static::class))
+                ->kebab()
+                ->replace('-', ' ')
+                ->title(),
+        };
+
+        return $customTitle;
+
+    }
 
     public function mount()
     {
@@ -41,6 +60,21 @@ class RestaurantDetails extends Page
         // Set default value for timezone
         if (!isset($data['timezone'])) {
             $data['timezone'] = config('app.timezone');
+        }
+
+        // Set default value for testimonials
+        if (!isset($data['testimonials'])) {
+            $data['testimonials'] = [
+                [
+                    'status' => false,
+                    'reviews' => [
+                        [
+                            'name' => 'John Doe',
+                            'review' => 'Awesome'
+                        ],
+                    ],
+                ],
+            ];
         }
 
         $this->data = $data;
@@ -105,9 +139,9 @@ class RestaurantDetails extends Page
             ->model(Restaurant::class)
             ->schema([
                 Forms\Components\Tabs::make('Tabs')
-                    ->columnSpanFull()
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('Basic Details')
+                        Forms\Components\Tabs\Tab::make('Restaurant Details')
+                            ->icon('heroicon-o-building-storefront')
                             ->columnSpanFull()
                             ->columns(12)
                             ->schema([
@@ -298,6 +332,8 @@ class RestaurantDetails extends Page
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Timezone')
+                            ->id('timezone')
+                            ->icon('heroicon-m-globe-alt')
                             ->schema([
                                 Forms\Components\Section::make('')
                                     ->compact()
@@ -306,6 +342,7 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Select::make('timezone')
                                             ->label('Timezone')
+                                            ->prefixIcon('heroicon-o-clock')
                                             ->options(collect(DateTimeZone::listIdentifiers())->mapWithKeys(function ($timezone) {
                                                 $dateTimeZone = new DateTimeZone($timezone);
                                                 $dateTime = new DateTime('now', $dateTimeZone);
@@ -321,6 +358,56 @@ class RestaurantDetails extends Page
                                             ->preload()
                                             ->default(config('app.timezone'))
                                             ->required(),
+                                    ]),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Reviews')
+                            ->id('testimonials')
+                            ->icon('heroicon-o-star')
+                            ->extraAttributes(['class' => '!p-0'])
+                            ->schema([
+                                Forms\Components\Repeater::make('testimonials')
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:dark:bg-transparent [&>ul>div>li]:dark:ring-0'])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\ToggleButtons::make('status')
+                                            ->label('Visibility')
+                                            ->hiddenLabel()
+                                            ->inline()
+                                            ->boolean()
+                                            ->options([
+                                                1 => 'Show Reviews',
+                                                0 => 'Hide Reviews',
+                                            ])
+                                            ->icons([
+                                                1 => 'heroicon-o-eye',
+                                                0 => 'heroicon-o-eye-slash',
+                                            ]),
+                                        Forms\Components\Repeater::make('reviews')
+                                            ->maxItems(10)
+                                            ->hiddenLabel()
+                                            ->reorderableWithButtons()
+                                            ->extraAttributes(['class' => '[&>ul>div>li]:!bg-slate-300/30 [&>ul>div>li]:dark:ring-0 [&>ul>div>li]:dark:!bg-slate-950/30'])
+                                            ->collapsible()
+                                            ->cloneable()
+                                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->label('Name')
+                                                    ->inlineLabel()
+                                                    ->prefixIcon('heroicon-m-user')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur:true)
+                                                    ->required(),
+                                                Forms\Components\TextInput::make('review')
+                                                    ->label('Review')
+                                                    ->inlineLabel()
+                                                    ->prefixIcon('heroicon-m-sparkles')
+                                                    ->prefixIconColor('primary')
+                                                    ->required(),
+                                            ]),
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
