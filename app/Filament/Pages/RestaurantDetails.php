@@ -366,7 +366,7 @@ class RestaurantDetails extends Page
                             ->extraAttributes(['class' => '!p-0'])
                             ->schema([
                                 Forms\Components\Repeater::make('testimonials')
-                                    ->extraAttributes(['class' => '[&>ul>div>li]:dark:bg-transparent [&>ul>div>li]:dark:ring-0'])
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
                                     ->addable(false)
                                     ->deletable(false)
                                     ->reorderable(false)
