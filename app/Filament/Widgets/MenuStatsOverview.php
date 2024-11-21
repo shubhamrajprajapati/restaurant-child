@@ -28,7 +28,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Reviews', 'icon' => 'star', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-testimonials-tab'])],
             ['label' => 'Opening Hours', 'icon' => 'clock', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
 
-            ['label' => 'Meta Details', 'icon' => 'code-bracket', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
+            ['label' => 'Meta Details', 'icon' => 'code-bracket', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl(['tab' => '-meta-details-tab'])],
             ['label' => 'Create Categories', 'icon' => 'squares-plus', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Menu Special Options', 'icon' => 'list-bullet', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
 

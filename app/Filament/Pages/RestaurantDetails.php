@@ -14,7 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Request;
-use Livewire\Attributes\Url;
+use Illuminate\Support\Str;
 
 class RestaurantDetails extends Page
 {
@@ -28,11 +28,14 @@ class RestaurantDetails extends Page
     protected ?Restaurant $record;
     public ?array $data = [];
 
+    public ?string $customTitle = '';
+
     public function getTitle(): string | Htmlable
     {
         $customTitle = match (Request::query('tab')) {
             '-testimonials-tab' => 'Reviews',
             '-timezone-tab' => 'Timezone',
+            '-meta-details-tab' => 'Meta Details',
 
             default => static::$title ?? (string) str(class_basename(static::class))
                 ->kebab()
@@ -40,7 +43,9 @@ class RestaurantDetails extends Page
                 ->title(),
         };
 
-        return $customTitle;
+        $this->customTitle = empty($this->customTitle) ? $customTitle : $this->customTitle;
+
+        return $this->customTitle;
 
     }
 
@@ -63,16 +68,30 @@ class RestaurantDetails extends Page
         }
 
         // Set default value for testimonials
-        if (!isset($data['testimonials'])) {
+        if (empty($data['testimonials']) || !is_array($data['testimonials'])) {
             $data['testimonials'] = [
                 [
                     'status' => false,
                     'reviews' => [
                         [
                             'name' => 'John Doe',
-                            'review' => 'Awesome'
+                            'review' => 'Awesome',
                         ],
                     ],
+                ],
+            ];
+        }
+
+        // Set default value for meta details
+        if (empty($data['meta_details']) || !is_array($data['meta_details'])) {
+            $data['meta_details'] = [
+                [
+                    'main_page_status' => false,
+                    'reviews_page_status' => false,
+                    'reservation_page_status' => false,
+                    'restaurant_menu_page_status' => false,
+                    'takeaway_menu_page_status' => false,
+                    'order_online_page_status' => false,
                 ],
             ];
         }
@@ -386,20 +405,20 @@ class RestaurantDetails extends Page
                                                 0 => 'heroicon-o-eye-slash',
                                             ]),
                                         Forms\Components\Repeater::make('reviews')
+                                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
                                             ->maxItems(10)
                                             ->hiddenLabel()
                                             ->reorderableWithButtons()
                                             ->extraAttributes(['class' => '[&>ul>div>li]:!bg-slate-300/30 [&>ul>div>li]:dark:ring-0 [&>ul>div>li]:dark:!bg-slate-950/30'])
                                             ->collapsible()
                                             ->cloneable()
-                                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
                                             ->schema([
                                                 Forms\Components\TextInput::make('name')
                                                     ->label('Name')
                                                     ->inlineLabel()
                                                     ->prefixIcon('heroicon-m-user')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur:true)
+                                                    ->live(onBlur: true)
                                                     ->required(),
                                                 Forms\Components\TextInput::make('review')
                                                     ->label('Review')
@@ -407,6 +426,332 @@ class RestaurantDetails extends Page
                                                     ->prefixIcon('heroicon-m-sparkles')
                                                     ->prefixIconColor('primary')
                                                     ->required(),
+                                            ]),
+                                    ]),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Meta Details')
+                            ->id('meta-details')
+                            ->icon('heroicon-o-code-bracket')
+                            ->extraAttributes(['class' => '!p-0'])
+                            ->schema([
+                                Forms\Components\Repeater::make('meta_details')
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\Section::make(Str::upper('Main Page'))
+                                            ->id('meta_details-main_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('main_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('main_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('main_page_status'),
+                                                Forms\Components\TextInput::make('main_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('main_page_status'),
+                                                Forms\Components\TagsInput::make('main_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
+                                            ]),
+                                        Forms\Components\Section::make(Str::upper('Reviews Page'))
+                                            ->id('meta_details-reviews_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('reviews_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('reviews_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('reviews_page_status'),
+                                                Forms\Components\TextInput::make('reviews_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('reviews_page_status'),
+                                                Forms\Components\TagsInput::make('reviews_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
+                                            ]),
+                                        Forms\Components\Section::make(Str::upper('Reservation Page'))
+                                            ->id('meta_details-reservation_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('reservation_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('reservation_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('reservation_page_status'),
+                                                Forms\Components\TextInput::make('reservation_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('reservation_page_status'),
+                                                Forms\Components\TagsInput::make('reservation_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
+                                            ]),
+                                        Forms\Components\Section::make(Str::upper('Restaurant Menu Page'))
+                                            ->id('meta_details-restaurant_menu_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('restaurant_menu_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('restaurant_menu_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('restaurant_menu_page_status'),
+                                                Forms\Components\TextInput::make('restaurant_menu_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('restaurant_menu_page_status'),
+                                                Forms\Components\TagsInput::make('restaurant_menu_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
+                                            ]),
+                                        Forms\Components\Section::make(Str::upper('Takeaway Menu Page'))
+                                            ->id('meta_details-takeaway_menu_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('takeaway_menu_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('takeaway_menu_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('takeaway_menu_page_status'),
+                                                Forms\Components\TextInput::make('takeaway_menu_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('takeaway_menu_page_status'),
+                                                Forms\Components\TagsInput::make('takeaway_menu_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
+                                            ]),
+                                        Forms\Components\Section::make(Str::upper('Order Online Page'))
+                                            ->id('meta_details-order_online_page')
+                                            ->icon('heroicon-o-document-text')
+                                            ->iconColor('primary')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
+                                            ->columnSpan(['lg' => 12])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('order_online_page_status')
+                                                    ->label('Visibility')
+                                                    ->inlineLabel()
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\TextInput::make('order_online_page_title')
+                                                    ->label('Title')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta title')
+                                                    ->prefixIcon('heroicon-m-h1')
+                                                    ->prefixIconColor('primary')
+                                                    ->live(onBlur: true)
+                                                    ->requiredIfAccepted('order_online_page_status'),
+                                                Forms\Components\TextInput::make('order_online_page_description')
+                                                    ->label('Description')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter meta description')
+                                                    ->prefixIcon('heroicon-m-bars-3-bottom-left')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('order_online_page_status'),
+                                                Forms\Components\TagsInput::make('order_online_page_keywords')
+                                                    ->label('Keywords')
+                                                    ->separator(',')
+                                                    ->splitKeys(['Tab', ','])
+                                                    ->reorderable()
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter keywords')
+                                                    ->prefixIconColor('primary')
+                                                    ->helperText('Use commas (,), the Tab key (→), or the Enter key to separate keywords.')
+                                                    ->nestedRecursiveRules([
+                                                        'min:3',
+                                                        'max:255',
+                                                    ]),
                                             ]),
                                     ]),
                             ]),
