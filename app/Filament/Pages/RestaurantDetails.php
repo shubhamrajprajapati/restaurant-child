@@ -9,11 +9,12 @@ use DateTimeZone;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class RestaurantDetails extends Page
@@ -37,12 +38,17 @@ class RestaurantDetails extends Page
             '-timezone-tab' => 'Timezone',
             '-meta-details-tab' => 'Meta Details',
             '-social-media-links-tab' => 'Social Media Links',
+            '-rolling-message-tab' => 'Rolling Message',
 
             default => static::$title ?? (string) str(class_basename(static::class))
                 ->kebab()
                 ->replace('-', ' ')
                 ->title(),
         };
+
+        if (Request::query('tab') == '-rolling-message-tab' && Request::query('type') == '-holiday-tab') {
+            $customTitle = 'Holiday Message';
+        }
 
         $this->customTitle = empty($this->customTitle) ? $customTitle : $this->customTitle;
 
@@ -124,6 +130,16 @@ class RestaurantDetails extends Page
             ];
         }
 
+        // Set default value for custom rolling message
+        if (empty($data['rolling_messages']) || !is_array($data['rolling_messages'])) {
+            $data['rolling_messages'] = [
+                [
+                    'regular_status' => false,
+                    'holiday_status' => false,
+                ],
+            ];
+        }
+
         $this->data = $data;
         $this->form->fill($this->data);
     }
@@ -185,7 +201,8 @@ class RestaurantDetails extends Page
             ->statePath('data')
             ->model(Restaurant::class)
             ->schema([
-                Forms\Components\Tabs::make('Tabs')
+                Forms\Components\Tabs::make()
+                    ->persistTabInQueryString()
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('Restaurant Details')
                             ->icon('heroicon-o-building-storefront')
@@ -429,8 +446,8 @@ class RestaurantDetails extends Page
                                                 0 => 'Hide Reviews',
                                             ])
                                             ->icons([
-                                                1 => 'heroicon-o-eye',
-                                                0 => 'heroicon-o-eye-slash',
+                                                1 => 'heroicon-m-eye',
+                                                0 => 'heroicon-m-eye-slash',
                                             ]),
                                         Forms\Components\Repeater::make('reviews')
                                             ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
@@ -489,8 +506,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('main_page_title')
                                                     ->label('Title')
@@ -540,8 +557,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('reviews_page_title')
                                                     ->label('Title')
@@ -591,8 +608,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('reservation_page_title')
                                                     ->label('Title')
@@ -642,8 +659,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('restaurant_menu_page_title')
                                                     ->label('Title')
@@ -693,8 +710,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('takeaway_menu_page_title')
                                                     ->label('Title')
@@ -744,8 +761,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\TextInput::make('order_online_page_title')
                                                     ->label('Title')
@@ -949,8 +966,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\FileUpload::make('custom_link_1_img')
                                                     ->hiddenLabel()
@@ -993,8 +1010,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\FileUpload::make('custom_link_2_img')
                                                     ->hiddenLabel()
@@ -1037,8 +1054,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\FileUpload::make('custom_link_3_img')
                                                     ->hiddenLabel()
@@ -1081,8 +1098,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\FileUpload::make('custom_link_4_img')
                                                     ->hiddenLabel()
@@ -1125,8 +1142,8 @@ class RestaurantDetails extends Page
                                                         0 => 'Hide',
                                                     ])
                                                     ->icons([
-                                                        1 => 'heroicon-o-eye',
-                                                        0 => 'heroicon-o-eye-slash',
+                                                        1 => 'heroicon-m-eye',
+                                                        0 => 'heroicon-m-eye-slash',
                                                     ]),
                                                 Forms\Components\FileUpload::make('custom_link_5_img')
                                                     ->hiddenLabel()
@@ -1153,6 +1170,227 @@ class RestaurantDetails extends Page
                                     ]),
 
                             ]),
+                        Forms\Components\Tabs\Tab::make('Rolling Message')
+                            ->id('rolling-message')
+                            ->icon('heroicon-o-tv')
+                            ->extraAttributes(['class' => '!p-0'])
+                            ->schema([
+                                Forms\Components\Repeater::make('rolling_messages')
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\Tabs::make()
+                                            ->persistTabInQueryString('type')
+                                            ->contained(false)
+                                            ->tabs([
+                                                Forms\Components\Tabs\Tab::make('Regular Rolling Message')
+                                                    ->id('regular')
+                                                    ->icon('heroicon-m-chat-bubble-bottom-center-text')
+                                                    ->schema([
+                                                        Forms\Components\ToggleButtons::make('regular_status')
+                                                            ->label('Visibility')
+                                                            ->hiddenLabel()
+                                                            ->columnSpanFull()
+                                                            ->inline()
+                                                            ->boolean()
+                                                            ->required()
+                                                            ->options([
+                                                                1 => 'Show Rolling Message',
+                                                                0 => 'Hide Rolling Message',
+                                                            ])
+                                                            ->icons([
+                                                                1 => 'heroicon-m-eye',
+                                                                0 => 'heroicon-m-eye-slash',
+                                                            ]),
+                                                        Forms\Components\Section::make()
+                                                            ->compact()
+                                                            ->columns(['sm' => 12])
+                                                            ->extraAttributes(['class' => '!bg-green-300/20 dark:!bg-green-400/5 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                                            ->schema([
+                                                                Forms\Components\TextInput::make('regular_active_msg')
+                                                                    ->label('Active Rolling Message')
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('No active rolling message. Click the toggle button to activate one.')
+                                                                    ->prefixIcon('heroicon-m-sparkles')
+                                                                    ->prefixIconColor('success')
+                                                                    ->columnSpanFull()
+                                                                    ->requiredIfAccepted('regular_status')
+                                                                    ->readOnly(),
+                                                            ]),
+                                                        Forms\Components\Section::make()
+                                                            ->compact()
+                                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                                            ->columns(['sm' => 12])
+                                                            ->schema([
+                                                                Forms\Components\TextInput::make('regular_msg_1')
+                                                                    ->label('Rolling Message 1')
+                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Enter message')
+                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
+                                                                    ->helperText(new HtmlString('This is the <b>DEFAULT ROLLING MESSAGE</b>'))
+                                                                    ->prefixIconColor('primary')
+                                                                    ->live(onBlur: true)
+                                                                    ->requiredIfAccepted('regular_msg_1_status'),
+                                                                Forms\Components\Toggle::make('regular_msg_1_status')
+                                                                    ->label('Active')
+                                                                    ->inlineLabel()
+                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
+                                                                    ->onIcon('heroicon-m-eye')
+                                                                    ->offIcon('heroicon-m-eye-slash')
+                                                                    ->onColor('success')
+                                                                    ->offColor('danger')
+                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_1')))
+                                                                    ->dehydrated()
+                                                                    ->live(onBlur: true)
+                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
+                                                                        if ($state == 1) {
+                                                                            $set('regular_active_msg', $get('regular_msg_1'));
+                                                                            $set('regular_msg_2_status', false);
+                                                                            $set('regular_msg_3_status', false);
+                                                                        }
+
+                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
+                                                                        && !$get('regular_msg_2_status')
+                                                                        && !$get('regular_msg_3_status');
+
+                                                                        if ($allMessagesInactive) {
+                                                                            $set('regular_active_msg', null);
+                                                                        }
+                                                                    }),
+                                                                Forms\Components\TextInput::make('regular_msg_2')
+                                                                    ->label('Rolling Message 2')
+                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Enter message')
+                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
+                                                                    ->prefixIconColor('primary')
+                                                                    ->live(onBlur: true)
+                                                                    ->requiredIfAccepted('regular_msg_2_status'),
+                                                                Forms\Components\Toggle::make('regular_msg_2_status')
+                                                                    ->label('Active')
+                                                                    ->inlineLabel()
+                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
+                                                                    ->onIcon('heroicon-m-eye')
+                                                                    ->offIcon('heroicon-m-eye-slash')
+                                                                    ->onColor('success')
+                                                                    ->offColor('danger')
+                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_2')))
+                                                                    ->dehydrated()
+                                                                    ->live(onBlur: true)
+                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
+                                                                        if ($state == 1) {
+                                                                            $set('regular_msg_1_status', false);
+                                                                            $set('regular_active_msg', $get('regular_msg_2'));
+                                                                            $set('regular_msg_3_status', false);
+                                                                        }
+
+                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
+                                                                        && !$get('regular_msg_2_status')
+                                                                        && !$get('regular_msg_3_status');
+
+                                                                        if ($allMessagesInactive) {
+                                                                            $set('regular_active_msg', null);
+                                                                        }
+                                                                    }),
+                                                                Forms\Components\TextInput::make('regular_msg_3')
+                                                                    ->label('Rolling Message 3')
+                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Enter message')
+                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
+                                                                    ->prefixIconColor('primary')
+                                                                    ->live(onBlur: true)
+                                                                    ->requiredIfAccepted('regular_msg_3_status'),
+                                                                Forms\Components\Toggle::make('regular_msg_3_status')
+                                                                    ->label('Active')
+                                                                    ->inlineLabel()
+                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
+                                                                    ->onIcon('heroicon-m-eye')
+                                                                    ->offIcon('heroicon-m-eye-slash')
+                                                                    ->onColor('success')
+                                                                    ->offColor('danger')
+                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_3')))
+                                                                    ->dehydrated()
+                                                                    ->live(onBlur: true)
+                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
+                                                                        if ($state == 1) {
+                                                                            $set('regular_msg_1_status', false);
+                                                                            $set('regular_msg_2_status', false);
+                                                                            $set('regular_active_msg', $get('regular_msg_3'));
+                                                                        }
+
+                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
+                                                                        && !$get('regular_msg_2_status')
+                                                                        && !$get('regular_msg_3_status');
+
+                                                                        if ($allMessagesInactive) {
+                                                                            $set('regular_active_msg', null);
+                                                                        }
+                                                                    }),
+                                                            ]),
+                                                    ]),
+                                                Forms\Components\Tabs\Tab::make('Holiday Rolling Message')
+                                                    ->id('holiday')
+                                                    ->icon('heroicon-m-stop')
+                                                    ->schema([
+                                                        Forms\Components\Section::make()
+                                                            ->compact()
+                                                            ->columns(['sm' => 12])
+                                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                                            ->schema([
+                                                                Forms\Components\ToggleButtons::make('holiday_status')
+                                                                    ->label('Visibility')
+                                                                    ->inlineLabel()
+                                                                    ->columnSpanFull()
+                                                                    ->inline()
+                                                                    ->boolean()
+                                                                    ->required()
+                                                                    ->options([
+                                                                        1 => 'Show Holiday Message',
+                                                                        0 => 'Hide Holiday Message',
+                                                                    ])
+                                                                    ->icons([
+                                                                        1 => 'heroicon-m-eye',
+                                                                        0 => 'heroicon-m-eye-slash',
+                                                                    ]),
+                                                                Forms\Components\TextInput::make('holiday_msg')
+                                                                    ->label('Message')
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Enter holiday message')
+                                                                    ->prefixIcon('heroicon-m-link')
+                                                                    ->prefixIconColor('primary')
+                                                                    ->columnSpanFull()
+                                                                    ->requiredIfAccepted('holiday_status'),
+                                                                Forms\Components\DateTimePicker::make('start_date')
+                                                                    ->label('Start Date/Time')
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Pick Start Date/Time')
+                                                                    ->prefixIcon('heroicon-m-calendar')
+                                                                    ->prefixIconColor('primary')
+                                                                    ->columnSpanFull()
+                                                                    ->native(false)
+                                                                    ->minDate(Carbon::today())
+                                                                    ->requiredIfAccepted('holiday_status'),
+                                                                Forms\Components\DateTimePicker::make('end_date')
+                                                                    ->label('End Date/Time')
+                                                                    ->inlineLabel()
+                                                                    ->placeholder('Pick Start Date/Time')
+                                                                    ->prefixIcon('heroicon-m-calendar')
+                                                                    ->prefixIconColor('primary')
+                                                                    ->columnSpanFull()
+                                                                    ->native(false)
+                                                                    ->minDate(Carbon::today())
+                                                                    ->requiredIfAccepted('holiday_status'),
+                                                            ]),
+                                                    ]),
+                                            ]),
+                                    ]),
+
+                            ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->schema([
                                 Forms\Components\Section::make('Close Restaurant')
@@ -1161,9 +1399,9 @@ class RestaurantDetails extends Page
                                     ->aside()
                                     ->schema([
                                         Forms\Components\Toggle::make('status')
-                                            ->label(fn(Get $get): ?string => $get('status') ? 'Closed Now' : 'Open Now')
+                                            ->label(fn(Forms\Get $get): ?string => $get('status') ? 'Closed Now' : 'Open Now')
                                             ->helperText(
-                                                fn(Get $get): ?string => $get('status')
+                                                fn(Forms\Get $get): ?string => $get('status')
                                                 ? 'The service is currently marked as closed. You can also add a custom closing message.'
                                                 : 'The restaurant is currently open. You can click the toggle button to mark it as closed.')
                                             ->onIcon('heroicon-o-lock-closed')
@@ -1174,7 +1412,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('status_msg')
                                             ->label('Closure Message')
                                             ->placeholder('Type a message for customers regarding the closure.')
-                                            ->visible(fn(Get $get): bool => $get('status')),
+                                            ->visible(fn(Forms\Get $get): bool => $get('status')),
                                     ]),
                                 Forms\Components\Section::make('Online Order')
                                     ->description('Set the availability of online orders and communicate any changes.')
@@ -1183,10 +1421,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('online_order_status')
                                             ->label(
-                                                fn(Get $get): string => $get('online_order_status') ? 'Open for Online Orders' : 'Closed for Online Orders'
+                                                fn(Forms\Get $get): string => $get('online_order_status') ? 'Open for Online Orders' : 'Closed for Online Orders'
                                             )
                                             ->helperText(
-                                                fn(Get $get): string => $get('online_order_status')
+                                                fn(Forms\Get $get): string => $get('online_order_status')
                                                 ? 'The restaurant is open for online orders. Click the toggle button to mark it as closed.'
                                                 : 'The restaurant is currently closed for online orders. Toggle on to allow orders again. You can also add a custom closing message.'
                                             )
@@ -1198,7 +1436,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('online_order_msg')
                                             ->label('Order Message')
                                             ->placeholder('Type a message for customers regarding closing online orders.')
-                                            ->hidden(fn(Get $get): bool => $get('online_order_status')),
+                                            ->hidden(fn(Forms\Get $get): bool => $get('online_order_status')),
                                     ]),
                                 Forms\Components\Section::make('Reservation')
                                     ->description('Control the reservation status and provide necessary information.')
@@ -1207,10 +1445,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('reservation_status')
                                             ->label(
-                                                fn(Get $get): string => $get('reservation_status') ? 'Open for Reservations' : 'Closed for Reservations'
+                                                fn(Forms\Get $get): string => $get('reservation_status') ? 'Open for Reservations' : 'Closed for Reservations'
                                             )
                                             ->helperText(
-                                                fn(Get $get): string => $get('reservation_status')
+                                                fn(Forms\Get $get): string => $get('reservation_status')
                                                 ? 'The restaurant is open for reservations. Click the toggle button to mark it as closed for new reservations.'
                                                 : 'The restaurant is currently closed for reservations. Toggle off to allow reservations again. You can also add a custom closing message.'
                                             )
@@ -1222,7 +1460,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('reservation_msg')
                                             ->label('Reservation Closing Message')
                                             ->placeholder('Type a message for customers regarding closing reservations.')
-                                            ->hidden(fn(Get $get): bool => $get('reservation_status')),
+                                            ->hidden(fn(Forms\Get $get): bool => $get('reservation_status')),
                                     ]),
                                 Forms\Components\Section::make('Shutdown')
                                     ->description('Manage the restaurant shutdown process and communicate with customers.')
@@ -1231,10 +1469,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('shutdown_status')
                                             ->label(
-                                                fn(Get $get): string => $get('shutdown_status') ? 'Shutdown' : 'Operational'
+                                                fn(Forms\Get $get): string => $get('shutdown_status') ? 'Shutdown' : 'Operational'
                                             )
                                             ->helperText(
-                                                fn(Get $get): string => $get('shutdown_status')
+                                                fn(Forms\Get $get): string => $get('shutdown_status')
                                                 ? 'The restaurant is currently shut down. Toggle off to resume operations. You can also add a custom shutdown message.'
                                                 : 'The restaurant is operational. Click the toggle button to mark it as shut down.'
                                             )
@@ -1246,7 +1484,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('shutdown_msg')
                                             ->label('Shutdown Message')
                                             ->placeholder('Type a message for customers regarding the shutdown.')
-                                            ->hidden(fn(Get $get): bool => !$get('shutdown_status')),
+                                            ->hidden(fn(Forms\Get $get): bool => !$get('shutdown_status')),
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Other Details')
@@ -1264,8 +1502,7 @@ class RestaurantDetails extends Page
                                             ->columnSpan(['lg' => 6]),
                                     ]),
                             ]),
-                    ])
-                    ->persistTabInQueryString(),
+                    ]),
 
                 Forms\Components\Fieldset::make('Contribution Log')
                     ->hidden(fn() => empty($this->record))

@@ -24,7 +24,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Restaurant Details', 'icon' => 'building-storefront', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl()],
             ['label' => 'Homepage Edits', 'icon' => 'pencil-square', 'design' => 'bg-gradient-cursor-design-1', 'url' => HomePageEdit::getUrl()],
 
-            ['label' => 'Rolling Message', 'icon' => 'chat-bubble-left', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Rolling Message', 'icon' => 'tv', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-rolling-message-tab', 'type' => '-regular-tab'])],
             ['label' => 'Reviews', 'icon' => 'star', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-testimonials-tab'])],
             ['label' => 'Opening Hours', 'icon' => 'clock', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
 
@@ -38,7 +38,7 @@ class MenuStatsOverview extends BaseWidget
 
             ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Designs', 'icon' => 'sparkles', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
-            ['label' => 'Holiday', 'icon' => 'stop', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
+            ['label' => 'Holiday Message', 'icon' => 'stop', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl(['tab' => '-rolling-message-tab', 'type' => '-holiday-tab'])],
 
             ['label' => 'Scripts', 'icon' => 'document-text', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],
