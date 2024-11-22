@@ -36,6 +36,7 @@ class RestaurantDetails extends Page
             '-testimonials-tab' => 'Reviews',
             '-timezone-tab' => 'Timezone',
             '-meta-details-tab' => 'Meta Details',
+            '-social-media-links-tab' => 'Social Media Links',
 
             default => static::$title ?? (string) str(class_basename(static::class))
                 ->kebab()
@@ -92,6 +93,33 @@ class RestaurantDetails extends Page
                     'restaurant_menu_page_status' => false,
                     'takeaway_menu_page_status' => false,
                     'order_online_page_status' => false,
+                ],
+            ];
+        }
+
+        // Set default value for social media links
+        if (empty($data['social_links']) || !is_array($data['social_links'])) {
+            $data['social_links'] = [
+                [
+                    'instagram_link_status' => false,
+                    'facebook_link_status' => false,
+                    'tripadvisor_link_status' => false,
+                    'whatsapp_link_status' => false,
+                    'youtube_link_status' => false,
+                    'google_review_link_status' => false,
+                ],
+            ];
+        }
+
+        // Set default value for custom social media links
+        if (empty($data['custom_social_links']) || !is_array($data['custom_social_links'])) {
+            $data['custom_social_links'] = [
+                [
+                    'custom_link_1_status' => false,
+                    'custom_link_2_status' => false,
+                    'custom_link_3_status' => false,
+                    'custom_link_4_status' => false,
+                    'custom_link_5_status' => false,
                 ],
             ];
         }
@@ -162,7 +190,7 @@ class RestaurantDetails extends Page
                         Forms\Components\Tabs\Tab::make('Restaurant Details')
                             ->icon('heroicon-o-building-storefront')
                             ->columnSpanFull()
-                            ->columns(12)
+                            ->columns(['lg' => 12])
                             ->schema([
                                 Forms\Components\Hidden::make('installation_token'),
                                 Forms\Components\Section::make('Restaurant Logo Upload')
@@ -470,7 +498,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('main_page_status'),
                                                 Forms\Components\TextInput::make('main_page_description')
                                                     ->label('Description')
@@ -522,7 +549,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('reviews_page_status'),
                                                 Forms\Components\TextInput::make('reviews_page_description')
                                                     ->label('Description')
@@ -574,7 +600,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('reservation_page_status'),
                                                 Forms\Components\TextInput::make('reservation_page_description')
                                                     ->label('Description')
@@ -626,7 +651,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('restaurant_menu_page_status'),
                                                 Forms\Components\TextInput::make('restaurant_menu_page_description')
                                                     ->label('Description')
@@ -678,7 +702,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('takeaway_menu_page_status'),
                                                 Forms\Components\TextInput::make('takeaway_menu_page_description')
                                                     ->label('Description')
@@ -730,7 +753,6 @@ class RestaurantDetails extends Page
                                                     ->placeholder('Enter meta title')
                                                     ->prefixIcon('heroicon-m-h1')
                                                     ->prefixIconColor('primary')
-                                                    ->live(onBlur: true)
                                                     ->requiredIfAccepted('order_online_page_status'),
                                                 Forms\Components\TextInput::make('order_online_page_description')
                                                     ->label('Description')
@@ -754,6 +776,382 @@ class RestaurantDetails extends Page
                                                     ]),
                                             ]),
                                     ]),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Social Media Links')
+                            ->id('social-media-links')
+                            ->icon('heroicon-o-link')
+                            ->extraAttributes(['class' => '!p-0'])
+                            ->schema([
+                                Forms\Components\Repeater::make('social_links')
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('instagram_link')
+                                                    ->label('Instagram Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('instagram_link_status'),
+                                                Forms\Components\Toggle::make('instagram_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('facebook_link')
+                                                    ->label('Facebook Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('facebook_link_status'),
+                                                Forms\Components\Toggle::make('facebook_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('tripadvisor_link')
+                                                    ->label('Tripadvisor Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('tripadvisor_link_status'),
+                                                Forms\Components\Toggle::make('tripadvisor_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('whatsapp_link')
+                                                    ->label('WhatsApp Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('whatsapp_link_status'),
+                                                Forms\Components\Toggle::make('whatsapp_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('youtube_link')
+                                                    ->label('TouTube Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('youtube_link_status'),
+                                                Forms\Components\Toggle::make('youtube_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                        Forms\Components\Section::make()
+                                            ->compact()
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->columns(['sm' => 12])
+                                            ->schema([
+                                                Forms\Components\TextInput::make('google_review_link')
+                                                    ->label('Google Review Link')
+                                                    ->columnSpan(['sm' => 10, 'md' => 11])
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->requiredIfAccepted('google_review_link_status'),
+                                                Forms\Components\Toggle::make('google_review_link_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 2, 'md' => 1])
+                                                    ->onIcon('heroicon-m-eye')
+                                                    ->offIcon('heroicon-m-eye-slash')
+                                                    ->onColor('success')
+                                                    ->offColor('danger'),
+                                            ]),
+                                    ]),
+                                Forms\Components\Repeater::make('custom_social_links')
+                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->hiddenLabel()
+                                    ->itemLabel('Upload custom social media icons and links. Use PNG files for the icons with dimensions of 512 x 512 pixels.')
+                                    ->schema([
+                                        Forms\Components\Section::make('Social Media 1 Link')
+                                            ->id('custom_social_links_section_1')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->columns(['sm' => 12])
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('custom_link_1_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 4])
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\FileUpload::make('custom_link_1_img')
+                                                    ->hiddenLabel()
+                                                    ->label('Image')
+                                                    ->disk('public')
+                                                    ->directory('custom_social_links')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->columnSpan(['sm' => 8])
+                                                    ->imageCropAspectRatio('1:1')
+                                                    ->maxSize(1024)
+                                                    ->downloadable()
+                                                    ->openable()
+                                                    ->requiredIfAccepted('custom_link_1_status'),
+                                                Forms\Components\TextInput::make('custom_link_1_url')
+                                                    ->label('Custom Link 1')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter custom social media link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpan(['sm' => 12])
+                                                    ->requiredIfAccepted('custom_link_1_status'),
+                                            ]),
+                                        Forms\Components\Section::make('Social Media 2 Link')
+                                            ->id('custom_social_links_section_2')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->columns(['sm' => 12])
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('custom_link_2_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 4])
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\FileUpload::make('custom_link_2_img')
+                                                    ->hiddenLabel()
+                                                    ->label('Image')
+                                                    ->disk('public')
+                                                    ->directory('custom_social_links')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->columnSpan(['sm' => 8])
+                                                    ->imageCropAspectRatio('1:1')
+                                                    ->maxSize(1024)
+                                                    ->downloadable()
+                                                    ->openable()
+                                                    ->requiredIfAccepted('custom_link_2_status'),
+                                                Forms\Components\TextInput::make('custom_link_2_url')
+                                                    ->label('Custom Link 1')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter custom social media link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpan(['sm' => 12])
+                                                    ->requiredIfAccepted('custom_link_2_status'),
+                                            ]),
+                                        Forms\Components\Section::make('Social Media 3 Link')
+                                            ->id('custom_social_links_section_3')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->columns(['sm' => 12])
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('custom_link_3_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 4])
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\FileUpload::make('custom_link_3_img')
+                                                    ->hiddenLabel()
+                                                    ->label('Image')
+                                                    ->disk('public')
+                                                    ->directory('custom_social_links')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->columnSpan(['sm' => 8])
+                                                    ->imageCropAspectRatio('1:1')
+                                                    ->maxSize(1024)
+                                                    ->downloadable()
+                                                    ->openable()
+                                                    ->requiredIfAccepted('custom_link_3_status'),
+                                                Forms\Components\TextInput::make('custom_link_3_url')
+                                                    ->label('Custom Link 1')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter custom social media link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpan(['sm' => 12])
+                                                    ->requiredIfAccepted('custom_link_3_status'),
+                                            ]),
+                                        Forms\Components\Section::make('Social Media 4 Link')
+                                            ->id('custom_social_links_section_4')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->columns(['sm' => 12])
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('custom_link_4_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 4])
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\FileUpload::make('custom_link_4_img')
+                                                    ->hiddenLabel()
+                                                    ->label('Image')
+                                                    ->disk('public')
+                                                    ->directory('custom_social_links')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->columnSpan(['sm' => 8])
+                                                    ->imageCropAspectRatio('1:1')
+                                                    ->maxSize(1024)
+                                                    ->downloadable()
+                                                    ->openable()
+                                                    ->requiredIfAccepted('custom_link_4_status'),
+                                                Forms\Components\TextInput::make('custom_link_4_url')
+                                                    ->label('Custom Link 1')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter custom social media link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpan(['sm' => 12])
+                                                    ->requiredIfAccepted('custom_link_4_status'),
+                                            ]),
+                                        Forms\Components\Section::make('Social Media 5 Link')
+                                            ->id('custom_social_links_section_5')
+                                            ->compact()
+                                            ->collapsible()
+                                            ->persistCollapsed()
+                                            ->columns(['sm' => 12])
+                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
+                                            ->schema([
+                                                Forms\Components\ToggleButtons::make('custom_link_5_status')
+                                                    ->label('Visibility')
+                                                    ->hiddenLabel()
+                                                    ->columnSpan(['sm' => 4])
+                                                    ->inline()
+                                                    ->boolean()
+                                                    ->options([
+                                                        1 => 'Show',
+                                                        0 => 'Hide',
+                                                    ])
+                                                    ->icons([
+                                                        1 => 'heroicon-o-eye',
+                                                        0 => 'heroicon-o-eye-slash',
+                                                    ]),
+                                                Forms\Components\FileUpload::make('custom_link_5_img')
+                                                    ->hiddenLabel()
+                                                    ->label('Image')
+                                                    ->disk('public')
+                                                    ->directory('custom_social_links')
+                                                    ->image()
+                                                    ->imageEditor()
+                                                    ->columnSpan(['sm' => 8])
+                                                    ->imageCropAspectRatio('1:1')
+                                                    ->maxSize(1024)
+                                                    ->downloadable()
+                                                    ->openable()
+                                                    ->requiredIfAccepted('custom_link_5_status'),
+                                                Forms\Components\TextInput::make('custom_link_5_url')
+                                                    ->label('Custom Link 1')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Enter custom social media link')
+                                                    ->prefixIcon('heroicon-m-link')
+                                                    ->prefixIconColor('primary')
+                                                    ->columnSpan(['sm' => 12])
+                                                    ->requiredIfAccepted('custom_link_5_status'),
+                                            ]),
+                                    ]),
+
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->schema([
@@ -856,7 +1254,7 @@ class RestaurantDetails extends Page
                                 Forms\Components\Repeater::make('other_details')
                                     ->hiddenLabel()
                                     ->columnSpanFull()
-                                    ->columns(12)
+                                    ->columns(['lg' => 12])
                                     ->collapsible()
                                     ->reorderableWithButtons()
                                     ->schema([

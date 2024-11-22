@@ -34,7 +34,7 @@ class MenuStatsOverview extends BaseWidget
 
             ['label' => 'Create Menu', 'icon' => 'table-cells', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Reservation', 'icon' => 'calendar-days', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
-            ['label' => 'Social Media Icons', 'icon' => 'squares-2x2', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Social Media Icons', 'icon' => 'squares-2x2', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-social-media-links-tab'])],
 
             ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Designs', 'icon' => 'sparkles', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
