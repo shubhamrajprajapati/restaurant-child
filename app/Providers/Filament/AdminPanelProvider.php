@@ -66,6 +66,14 @@ class AdminPanelProvider extends PanelProvider
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
             ])
+            ->navigationGroups([
+                'Restaurant Information', // Primary details about the restaurant should be readily accessible for editing or updates.
+                'User Management', // User-related tasks, such as managing admin or customer accounts, are generally a priority.
+                'Customer Engagement', // Focuses on customer interactions, reviews, reservations, and orders.
+                'Website Content Management', // Manages dynamic content like homepage edits, categories, and menus.
+                'Website Design Settings', // Design elements are secondary but necessary for customization.
+                'Technical Settings', // These are less frequently updated but critical for technical configurations.
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
