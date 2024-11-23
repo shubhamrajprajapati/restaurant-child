@@ -16,11 +16,11 @@ class HomePageEdit extends Page
     protected static string $resource = PageEdit::class;
     protected static ?string $model = PageEdit::class;
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
-    protected static ?string $navigationGroup = 'Page Customization';
+    protected static ?string $navigationGroup = 'Website Content Management';
     protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.home-page-edit';
     private static string $key = 'home_page';
-    protected ?PageEdit $record;
+    public ?PageEdit $record;
     public ?array $data = [];
 
     public function mount()

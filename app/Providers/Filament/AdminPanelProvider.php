@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\CentralLogics\Helpers;
+use App\Filament\Pages\RestaurantDetails;
 use App\Models\Restaurant;
 use App\Services\SuperAdminApiService;
 use Filament\Enums\ThemeMode;
@@ -21,6 +22,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationItem;
+use Illuminate\Support\Facades\Request;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -73,6 +76,100 @@ class AdminPanelProvider extends PanelProvider
                 'Website Content Management', // Manages dynamic content like homepage edits, categories, and menus.
                 'Website Design Settings', // Design elements are secondary but necessary for customization.
                 'Technical Settings', // These are less frequently updated but critical for technical configurations.
+            ])
+            ->navigationItems([
+                NavigationItem::make('Rolling Message')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-rolling-message-tab', 
+                            'type' => '-regular-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-tv')
+                    ->group('Restaurant Information')
+                    ->sort(3),
+                NavigationItem::make('Holiday Message')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-rolling-message-tab', 
+                            'type' => '-holiday-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-stop')
+                    ->group('Restaurant Information')
+                    ->sort(4),
+                NavigationItem::make('Reservation Settings')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-reservation-settings-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-wrench')
+                    ->group('Customer Engagement')
+                    ->sort(1),
+                NavigationItem::make('Testimonials')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-testimonials-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-star')
+                    ->group('Website Content Management')
+                    ->sort(2),
+                NavigationItem::make('Meta Details')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-meta-details-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-code-bracket')
+                    ->group('Website Content Management')
+                    ->sort(3),
+                NavigationItem::make('Social Media Icons')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-social-media-links-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-squares-2x2')
+                    ->group('Website Content Management')
+                    ->sort(6),
+                NavigationItem::make('Color Themes')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-color-themes-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-swatch')
+                    ->group('Website Design Settings')
+                    ->sort(1),
+                NavigationItem::make('Designs')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-designs-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-sparkles')
+                    ->group('Website Design Settings')
+                    ->sort(2),
+                NavigationItem::make('Scripts')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-scripts-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-code-bracket-square')
+                    ->group('Technical Settings')
+                    ->sort(2),
+                NavigationItem::make('Timezone')
+                    ->url(
+                        fn (): string => RestaurantDetails::getUrl([
+                            'tab' => '-timezone-tab'
+                        ])
+                    )
+                    ->icon('heroicon-o-globe-alt')
+                    ->group('Technical Settings')
+                    ->sort(3),
             ])
             ->middleware([
                 EncryptCookies::class,

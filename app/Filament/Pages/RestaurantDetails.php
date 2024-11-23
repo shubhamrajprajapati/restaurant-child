@@ -22,18 +22,18 @@ class RestaurantDetails extends Page
     use FilamentCustomPageAuthorization;
     protected static string $resource = Restaurant::class;
     protected static ?string $model = Restaurant::class;
-    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 1;
     protected static string $view = 'filament.pages.restaurant-details';
-    protected ?Restaurant $record;
+    protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
+    protected static ?string $navigationGroup = 'Restaurant Information';
+    protected static ?int $navigationSort = 1;
+    public ?Restaurant $record;
     public ?array $data = [];
-
     public ?string $customTitle = '';
+    public ?string $tabQuery;
 
     public function getTitle(): string | Htmlable
     {
-        $customTitle = match (Request::query('tab')) {
+        $customTitle = match ($this->tabQuery) {
             '-testimonials-tab' => 'Reviews',
             '-timezone-tab' => 'Timezone',
             '-meta-details-tab' => 'Meta Details',
@@ -59,8 +59,9 @@ class RestaurantDetails extends Page
     public function mount()
     {
         $restaurantDetailFromSuperAdminPanel = app('api.data');
-
         $this->record = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first();
+
+        $this->tabQuery = empty($this->record) ? null : Request::query('tab'); // If null, the "Restaurant Details" tab will be shown by default.
 
         $data = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
 
@@ -205,9 +206,11 @@ class RestaurantDetails extends Page
                     ->persistTabInQueryString()
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('Restaurant Details')
+                            ->id('restaurant-details')
                             ->icon('heroicon-o-building-storefront')
                             ->columnSpanFull()
                             ->columns(['lg' => 12])
+                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || empty($this->tabQuery) || $this->tabQuery == 'undefined'))
                             ->schema([
                                 Forms\Components\Hidden::make('installation_token'),
                                 Forms\Components\Section::make('Restaurant Logo Upload')
@@ -398,6 +401,7 @@ class RestaurantDetails extends Page
                         Forms\Components\Tabs\Tab::make('Timezone')
                             ->id('timezone')
                             ->icon('heroicon-m-globe-alt')
+                            ->visible(fn() => $this->tabQuery == '-timezone-tab')
                             ->schema([
                                 Forms\Components\Section::make('')
                                     ->compact()
@@ -428,6 +432,7 @@ class RestaurantDetails extends Page
                             ->id('testimonials')
                             ->icon('heroicon-o-star')
                             ->extraAttributes(['class' => '!p-0'])
+                            ->visible(fn() => $this->tabQuery == '-testimonials-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('testimonials')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -478,6 +483,7 @@ class RestaurantDetails extends Page
                             ->id('meta-details')
                             ->icon('heroicon-o-code-bracket')
                             ->extraAttributes(['class' => '!p-0'])
+                            ->visible(fn() => $this->tabQuery == '-meta-details-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('meta_details')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -798,6 +804,7 @@ class RestaurantDetails extends Page
                             ->id('social-media-links')
                             ->icon('heroicon-o-link')
                             ->extraAttributes(['class' => '!p-0'])
+                            ->visible(fn() => $this->tabQuery == '-social-media-links-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('social_links')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -1174,6 +1181,7 @@ class RestaurantDetails extends Page
                             ->id('rolling-message')
                             ->icon('heroicon-o-tv')
                             ->extraAttributes(['class' => '!p-0'])
+                            ->visible(fn() => $this->tabQuery == '-rolling-message-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('rolling_messages')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -1392,6 +1400,8 @@ class RestaurantDetails extends Page
 
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
+                            ->id('settings')
+                            ->visible(fn() => $this->tabQuery == '-settings-tab')
                             ->schema([
                                 Forms\Components\Section::make('Close Restaurant')
                                     ->description('Manage the status and message for temporarily closing your restaurant.')
@@ -1488,6 +1498,8 @@ class RestaurantDetails extends Page
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Other Details')
+                            ->id('other-details')
+                            ->visible(fn() => $this->tabQuery == '-other-details-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('other_details')
                                     ->hiddenLabel()

@@ -33,16 +33,16 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Menu Special Options', 'icon' => 'list-bullet', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
 
             ['label' => 'Create Menu', 'icon' => 'table-cells', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
-            ['label' => 'Reservation', 'icon' => 'calendar-days', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Reservation Settings', 'icon' => 'wrench', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Social Media Icons', 'icon' => 'squares-2x2', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-social-media-links-tab'])],
 
             ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Designs', 'icon' => 'sparkles', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Holiday Message', 'icon' => 'stop', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl(['tab' => '-rolling-message-tab', 'type' => '-holiday-tab'])],
 
-            ['label' => 'Scripts', 'icon' => 'document-text', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Scripts', 'icon' => 'code-bracket-square', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],
-            ['label' => 'Reservations/Order', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Reservations & Orders', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
         ];
 
     }
