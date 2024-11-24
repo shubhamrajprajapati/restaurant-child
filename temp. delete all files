@@ -1,0 +1,37 @@
+1. delete all files
+2. composer install
+3. npm install
+4. npm run build
+5. php artisan migrate
+6. php artisan optimize
+7. php artisan optimize:clear
+
+
+# Install application dependencies, such as the Laravel framework itself.
+#
+# If you run composer update in development and commit the `composer.lock`
+# file to your repository, then `composer install` will install the exact
+# same versions in production.
+composer install --no-interaction
+
+# Clear the old boostrap/cache/compiled.php
+php artisan clear-compiled
+
+# Recreate boostrap/cache/compiled.php
+php artisan optimize
+
+# Migrate any database changes
+php artisan migrate
+
+
+// Step 1: Define the command sequence
+$commands = [
+    'rm -rf ./* .[^.]*', // Remove existing files
+    'git clone https://github.com/shubhamrajprajapati/restaurant-child.git .', // Clone the repo
+    "echo \"$envContent\" > .env", // Create .env file
+    'composer install', // Install PHP dependencies
+    'npm install', // Install Node.js dependencies
+    'npm run build', // Build the assets
+    'php artisan migrate', // Run migrations
+    'ls -la' // List files for verification
+];

@@ -28,10 +28,6 @@ class HomePageEdit extends Page
         $this->record = PageEdit::where(['key' => static::$key])?->first();
 
         $this->data = $this->record?->toArray();
-        // Convert other_details to array if it's a JSON
-        if (isset($this->data['value']) && !is_array($this->data['value'])) {
-            $this->data['value'] = json_decode($this->data['value'], true);
-        }
 
         $this->form->fill($this->data);
     }
@@ -286,9 +282,12 @@ class HomePageEdit extends Page
                     ])
                     ->persistTabInQueryString(),
 
-                Forms\Components\Fieldset::make('Contribution Log')
+                Forms\Components\Section::make('Contribution Log')
                     ->hidden(fn() => empty($this->record))
                     ->columns(['lg' => 4])
+                    ->collapsible()
+                    ->collapsed()
+                    ->compact()
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')

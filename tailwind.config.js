@@ -16,8 +16,8 @@ export default {
             },
             colors: {
                 defaultWhite: "#ffffff",
-                defaultBlue: "#0000ff",
-                defaultGreen: "#3fbea7",
+                defaultBlue: "#0034ad",
+                defaultGreen: "#12ba1e",
                 defaultBlack: "#1e1926",
                 defaultPurple: "#e39dff",
             },

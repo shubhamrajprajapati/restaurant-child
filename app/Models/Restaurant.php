@@ -102,12 +102,12 @@ class Restaurant extends Model implements Sortable
     public function getLogoFullUrlAttribute()
     {
         $value = $this->logo;
-        return Helpers::get_full_url(null, $value, 'public', 'logo');
+        return Helpers::get_img_full_url(null, $value, 'public', 'logo');
     }
     public function getFaviconFullUrlAttribute()
     {
         $value = $this->favicon;
-        return Helpers::get_full_url(null, $value, 'public', 'favicon');
+        return Helpers::get_img_full_url(null, $value, 'public', 'favicon');
     }
 
     public function creator(): BelongsTo

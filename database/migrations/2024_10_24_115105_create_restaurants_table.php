@@ -37,8 +37,8 @@ return new class extends Migration
 
             $table->unsignedSmallInteger('order_column')->nullable();
 
-            $table->json('emails')->nullable();
             $table->json('telephones')->nullable();
+            $table->json('emails')->nullable();
             $table->json('addresses')->nullable();
 
             $table->json('rolling_messages')->nullable();

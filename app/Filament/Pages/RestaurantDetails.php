@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 
 class RestaurantDetails extends Page
 {
@@ -35,7 +36,7 @@ class RestaurantDetails extends Page
     {
         $customTitle = match ($this->tabQuery) {
             '-testimonials-tab' => 'Reviews',
-            '-timezone-tab' => 'Timezone',
+            '-timezone-tab' => 'Timezone (' . date_default_timezone_get() . ")",
             '-meta-details-tab' => 'Meta Details',
             '-social-media-links-tab' => 'Social Media Links',
             '-rolling-message-tab' => 'Rolling Message',
@@ -194,6 +195,17 @@ class RestaurantDetails extends Page
             ->body('Restaurant Details Saved Successfully!')
             ->success()
             ->send();
+
+        // Check if app name or timezone changes then update in .env file
+        if (!empty($data['name']) && $data['name'] != config('app.name')) {
+            update_env_value('APP_NAME', $this->record->name, false);
+            return redirect()->to(URL::previous());
+        }
+        if (!empty($data['timezone']) && $data['timezone'] != config('app.timezone')) {
+            update_env_value('APP_TIMEZONE', $this->record->timezone, false);
+            return redirect()->to(URL::previous());
+        }
+
     }
 
     public function form(Form $form): Form
@@ -1373,7 +1385,7 @@ class RestaurantDetails extends Page
                                                                     ->prefixIconColor('primary')
                                                                     ->columnSpanFull()
                                                                     ->requiredIfAccepted('holiday_status'),
-                                                                Forms\Components\DateTimePicker::make('start_date')
+                                                                Forms\Components\DateTimePicker::make('holiday_start_date')
                                                                     ->label('Start Date/Time')
                                                                     ->inlineLabel()
                                                                     ->placeholder('Pick Start Date/Time')
@@ -1383,7 +1395,7 @@ class RestaurantDetails extends Page
                                                                     ->native(false)
                                                                     ->minDate(Carbon::today())
                                                                     ->requiredIfAccepted('holiday_status'),
-                                                                Forms\Components\DateTimePicker::make('end_date')
+                                                                Forms\Components\DateTimePicker::make('holiday_end_date')
                                                                     ->label('End Date/Time')
                                                                     ->inlineLabel()
                                                                     ->placeholder('Pick Start Date/Time')
@@ -1401,7 +1413,7 @@ class RestaurantDetails extends Page
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->id('settings')
-                            ->visible(fn() => $this->tabQuery == '-settings-tab')
+                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || empty($this->tabQuery) || $this->tabQuery == 'undefined'))
                             ->schema([
                                 Forms\Components\Section::make('Close Restaurant')
                                     ->description('Manage the status and message for temporarily closing your restaurant.')
@@ -1516,9 +1528,12 @@ class RestaurantDetails extends Page
                             ]),
                     ]),
 
-                Forms\Components\Fieldset::make('Contribution Log')
+                Forms\Components\Section::make('Contribution Log')
                     ->hidden(fn() => empty($this->record))
                     ->columns(['lg' => 4])
+                    ->collapsible()
+                    ->collapsed()
+                    ->compact()
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
