@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Pages\HomePageEdit;
 use App\Filament\Pages\RestaurantDetails;
+use App\Filament\Resources\ReservationResource;
 use App\Filament\Resources\UserResource;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -42,7 +43,7 @@ class MenuStatsOverview extends BaseWidget
 
             ['label' => 'Scripts', 'icon' => 'code-bracket-square', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],
-            ['label' => 'Reservations & Orders', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Reservations & Orders', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => ReservationResource::getUrl()],
         ];
 
     }

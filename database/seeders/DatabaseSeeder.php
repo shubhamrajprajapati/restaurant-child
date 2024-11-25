@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(PageEditSeeder::class);
+        $this->call(RestaurantSeeder::class);
 
         // $this->call(RestaurantSeeder::class);
 

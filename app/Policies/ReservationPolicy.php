@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\PageEdit;
+use App\Models\Reservation;
 use App\Models\User;
 
-class PageEditPolicy
+class ReservationPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +18,7 @@ class PageEditPolicy
     /**
      * Determine whether the user can view a specific model.
      */
-    public function view(User $user, PageEdit $pageEdit): bool
+    public function view(User $user, Reservation $reservation): bool
     {
         return $user->role->isAdmin();
     }
@@ -34,7 +34,7 @@ class PageEditPolicy
     /**
      * Determine whether the user can update a specific model.
      */
-    public function update(User $user, PageEdit $pageEdit): bool
+    public function update(User $user, Reservation $reservation): bool
     {
         return $user->role->isAdmin();
     }
@@ -42,7 +42,7 @@ class PageEditPolicy
     /**
      * Determine whether the user can delete a specific model.
      */
-    public function delete(User $user, PageEdit $pageEdit): bool
+    public function delete(User $user, Reservation $reservation): bool
     {
         return $user->role->isAdmin();
     }
@@ -90,7 +90,7 @@ class PageEditPolicy
     /**
      * Determine whether the user can restore a soft-deleted model.
      */
-    public function restore(User $user, PageEdit $pageEdit): bool
+    public function restore(User $user, Reservation $reservation): bool
     {
         return $user->role->isAdmin();
     }
