@@ -1,12 +1,12 @@
-<nav x-data="{ open: false }"
-    class="bg-transparent dark:bg-gray-800 border-b border-gray-100/10 dark:border-gray-100/10 transition-all duration-200 ease-in-out backdrop-blur-sm">
+<nav x-data="{ open: false }" :class="{ 'bg-defaultBlue': open }"
+    class="dark:bg-gray-800 border-b border-gray-100/10 dark:border-gray-100/10 transition-all duration-200 ease-in-out backdrop-blur-sm">
     <!-- Primary Navigation Menu -->
     <div class="max-w-full px-5 mx-auto sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a :href="route('home')">
                         <div class="h-14 p-1 w-auto">
                             <x-application-logo class="block text-gray-800 dark:text-gray-200" />
                         </div>
@@ -15,7 +15,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('home') }}">
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         {{ __('Home') }}
                     </x-nav-link>
                 </div>
@@ -39,7 +39,7 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-2">
                 <x-primary-button>
-                   <x-heroicon-m-calendar-days class="mr-1 h-5 w-5" />Reservation
+                    <x-heroicon-m-calendar-days class="mr-1 h-5 w-5" />Reservation
                 </x-primary-button>
                 <x-secondary-button>
                     <x-heroicon-m-list-bullet class="mr-1 h-5 w-5" /> Menu
@@ -137,36 +137,53 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-defaultBlue">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                {{ __('Home') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link href="#about-us">
+                {{ __('About Us') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link href="#testinomials">
+                {{ __('Reviews') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link href="#contact-us">
+                {{ __('Contact Us') }}
             </x-responsive-nav-link>
         </div>
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
+        @auth
+            <!-- Responsive Settings Options -->
+            <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                <div class="px-4">
+                    <div class="font-medium text-base text-gray-300 dark:text-gray-200">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-gray-400">{{ Auth::user()->email }}</div>
+                </div>
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('profile.edit')">
+                        {{ __('Profile') }}
                     </x-responsive-nav-link>
-                </form>
+
+                    <!-- Authentication -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-responsive-nav-link :href="route('logout')"
+                            onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
             </div>
-        </div>
+        @endauth
     </div>
 </nav>
