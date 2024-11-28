@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\ColorThemeTypeEnum;
 use App\Models\ColorTheme;
 use App\Models\User;
 
@@ -37,7 +36,7 @@ class ColorThemePolicy
      */
     public function update(User $user, ColorTheme $colorTheme): bool
     {
-        return $user->role->isAdmin();
+        return $user->role->isAdmin() && $colorTheme->type?->isManualTheme();
     }
 
     /**
@@ -45,7 +44,7 @@ class ColorThemePolicy
      */
     public function delete(User $user, ColorTheme $colorTheme): bool
     {
-        return $user->role->isAdmin() && $colorTheme->type == ColorThemeTypeEnum::default();
+        return $user->role->isAdmin() && $colorTheme->type?->isManualTheme();
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\ColorWithReverse;
 use App\Enums\ColorThemeTypeEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -80,44 +79,6 @@ class ColorTheme extends Model implements Sortable
      * @var array
      */
     protected $casts = [
-        // Theme colors
-        'theme_1' => ColorWithReverse::class,
-        'theme_2' => ColorWithReverse::class,
-        'theme_3' => ColorWithReverse::class,
-        'theme_4' => ColorWithReverse::class,
-
-        // Light colors
-        'light_1' => ColorWithReverse::class,
-        'light_2' => ColorWithReverse::class,
-        'light_3' => ColorWithReverse::class,
-        'light_4' => ColorWithReverse::class,
-
-        // Dark colors
-        'dark_1' => ColorWithReverse::class,
-        'dark_2' => ColorWithReverse::class,
-        'dark_3' => ColorWithReverse::class,
-        'dark_4' => ColorWithReverse::class,
-
-        // Marquee colors
-        'marquee_1' => ColorWithReverse::class,
-        'marquee_2' => ColorWithReverse::class,
-
-        // Text colors
-        'text_white' => ColorWithReverse::class,
-        'text_black' => ColorWithReverse::class,
-
-        // Background colors
-        'bg_white' => ColorWithReverse::class,
-        'bg_black' => ColorWithReverse::class,
-
-        // Neutral colors
-        'neutral_white' => ColorWithReverse::class,
-        'neutral_black' => ColorWithReverse::class,
-        'neutral_gray' => ColorWithReverse::class,
-        'neutral_light_gray' => ColorWithReverse::class,
-        'neutral_x_light_gray' => ColorWithReverse::class,
-        'neutral_dark_gray' => ColorWithReverse::class,
-
         'active' => 'boolean',
         'type' => ColorThemeTypeEnum::class,
     ];
@@ -161,25 +122,29 @@ class ColorTheme extends Model implements Sortable
     }
 
     /**
-     * Dynamic accessor for color attributes with "r" (reversed) or "o" (original) prefix.
-     * Also supports accessing the color's original or reversed value by "r" or "o" prefixes.
+     * Dynamic accessor for original and reversed color attributes.
      *
-     * @param string $key
-     * @return mixed
+     * - Access `$model->key` to get the original color value.
+     * - Access `$model->rkey` to get the reversed color using the helper function.
+     *
+     * @param string $key The attribute being accessed.
+     * @return string|null The original or reversed color value.
      */
     public function __get($key)
     {
-        // Handle original and reversed colors based on prefix
-        if (str_starts_with($key, 'r') || str_starts_with($key, 'o')) {
-            $type = str_starts_with($key, 'r') ? 'reversed' : 'original';
-            $originalKey = lcfirst(substr($key, 1)); // Remove "r" or "o" prefix
+        // Check for "r" prefix (reversed color)
+        if (str_starts_with($key, 'r')) {
+            $originalKey = lcfirst(substr($key, 1)); // Remove "r" prefix to get the original key
 
-            if (array_key_exists($originalKey, $this->casts)) {
-                return $this->$originalKey->$type ?? null; // Return original or reversed value
+            // Check if the original key exists in attributes
+            if (array_key_exists($originalKey, $this->attributes) && $this->attributes[$originalKey]) {
+                return invert_hex_color($this->attributes[$originalKey]);
             }
+
+            return null; // Return null if original key doesn't exist or is null
         }
 
-        // Return the default attribute if no match
+        // Default behavior: Return the original value for non-prefixed keys
         return parent::__get($key);
     }
 
@@ -211,6 +176,14 @@ class ColorTheme extends Model implements Sortable
             // Prevent deletion if it’s the last row
             if (self::count() <= 1) {
                 throw new \Exception('You cannot delete the last color theme.');
+            }
+
+            // If the theme being deleted is the active one, activate the first theme
+            if ($colorTheme->active) {
+                $firstTheme = self::first();
+                if ($firstTheme) {
+                    $firstTheme->update(['active' => true]);
+                }
             }
         });
 

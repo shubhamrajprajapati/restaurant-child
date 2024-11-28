@@ -20,6 +20,22 @@ enum ColorThemeTypeEnum: int implements HasLabel, HasColor, HasIcon
     }
 
     /**
+     * Checks if the theme is the default theme.
+     */
+    public function isDefaultTheme(): bool
+    {
+        return $this === self::DEFAULT;
+    }
+
+    /**
+     * Checks if the theme is a manual (custom) theme.
+     */
+    public function isManualTheme(): bool
+    {
+        return $this === self::CUSTOM;
+    }
+
+    /**
      * Returns the label for the color theme type.
      */
     public function getLabel(): ?string

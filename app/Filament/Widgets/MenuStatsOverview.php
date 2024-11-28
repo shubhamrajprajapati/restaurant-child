@@ -6,6 +6,7 @@ use App\Filament\Pages\HolidayMessagePage;
 use App\Filament\Pages\HomePageEdit;
 use App\Filament\Pages\RestaurantDetails;
 use App\Filament\Pages\RollingMessagePage;
+use App\Filament\Resources\ColorThemeResource;
 use App\Filament\Resources\ReservationResource;
 use App\Filament\Resources\UserResource;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -39,7 +40,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Reservation Settings', 'icon' => 'wrench', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Social Media Icons', 'icon' => 'squares-2x2', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-social-media-links-tab'])],
 
-            ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
+            ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => ColorThemeResource::getUrl()],
             ['label' => 'Designs', 'icon' => 'sparkles', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Holiday Message', 'icon' => 'bell', 'design' => 'bg-gradient-cursor-design-1', 'url' => HolidayMessagePage::getUrl()],
 

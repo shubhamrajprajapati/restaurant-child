@@ -2,38 +2,38 @@
 
 <?php
 // Group 1
-$tc1 = $colorTheme?->otheme_1;
-$tc2 = $colorTheme?->otheme_2;
-$tc3 = $colorTheme?->otheme_3;
-$tc4 = $colorTheme?->otheme_4;
-$ltc1 = $colorTheme?->olight_1;
-$ltc2 = $colorTheme?->olight_2;
-$ltc3 = $colorTheme?->olight_3;
-$ltc4 = $colorTheme?->olight_4;
-$dtc1 = $colorTheme?->odark_1;
-$dtc2 = $colorTheme?->odark_2;
-$dtc3 = $colorTheme?->odark_3;
-$dtc4 = $colorTheme?->odark_4;
+$tc1 = $colorTheme?->theme_1;
+$tc2 = $colorTheme?->theme_2;
+$tc3 = $colorTheme?->theme_3;
+$tc4 = $colorTheme?->theme_4;
+$ltc1 = $colorTheme?->light_1;
+$ltc2 = $colorTheme?->light_2;
+$ltc3 = $colorTheme?->light_3;
+$ltc4 = $colorTheme?->light_4;
+$dtc1 = $colorTheme?->dark_1;
+$dtc2 = $colorTheme?->dark_2;
+$dtc3 = $colorTheme?->dark_3;
+$dtc4 = $colorTheme?->dark_4;
 
 // Group 2
-$mtc1 = $colorTheme?->omarquee_1;
-$mtc2 = $colorTheme?->omarquee_2;
+$mtc1 = $colorTheme?->marquee_1;
+$mtc2 = $colorTheme?->marquee_2;
 
 // Group 3
-$txtwhite = $colorTheme?->otext_white;
-$txtblack = $colorTheme?->otext_black;
+$txtwhite = $colorTheme?->text_white;
+$txtblack = $colorTheme?->text_black;
 
 // Group 4
-$backwhite = $colorTheme?->obg_white;
-$backblack = $colorTheme?->obg_black;
+$backwhite = $colorTheme?->bg_white;
+$backblack = $colorTheme?->bg_black;
 
 // Group 5
-$white = $colorTheme?->oneutral_white;
-$black = $colorTheme?->oneutral_black;
-$gray = $colorTheme?->oneutral_gray;
-$lgray = $colorTheme?->oneutral_light_gray;
-$elgray = $colorTheme?->oneutral_x_light_gray;
-$dgray = $colorTheme?->oneutral_dark_gray;
+$white = $colorTheme?->neutral_white;
+$black = $colorTheme?->neutral_black;
+$gray = $colorTheme?->neutral_gray;
+$lgray = $colorTheme?->neutral_light_gray;
+$elgray = $colorTheme?->neutral_x_light_gray;
+$dgray = $colorTheme?->neutral_dark_gray;
 ?>
 
 <style>
