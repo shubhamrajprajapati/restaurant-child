@@ -5,23 +5,21 @@ namespace App\Services;
 use App\CentralLogics\Helpers;
 use App\Models\Restaurant;
 use App\Models\RollingMessage;
+use Illuminate\Support\Facades\Cache;
+use stdClass;
 
 class RestaurantService
 {
     public function getApiData($key = 'all')
     {
-        $apiData = app('api.data');
-        return $key == 'all' ? $apiData : $apiData[$key] ?? null;
+        // Retrieve the cached API data
+        $apiData = Cache::get('super_admin_api_data');
+        return $key == 'all' ? $apiData : $apiData?->$key ?? null;
     }
-    public function getRestaurantData($domain = null): ?array
+    public function getRestaurantData($domain = null): ?Restaurant
     {
         $domain ??= $this->getApiData('domain');
-        $data = Restaurant::where('domain', $domain)->first()?->toArray();
-
-        // Safely decode JSON if other_details is present and not already an array
-        $data['other_details'] = isset($data['other_details']) && !is_array($data['other_details'])
-        ? json_decode($data['other_details'], true)
-        : $data['other_details'] ?? null;
+        $data = Restaurant::where('domain', $domain)->first();
 
         return $data;
     }
@@ -46,29 +44,28 @@ class RestaurantService
         return null;
     }
 
-    public function getTestimonialsData(array $data = []): ?array
+    public function getTestimonialsData(?Restaurant $data = null): ?array
     {
-        $testimonialData = !empty($data['testimonials']) && !empty($data['testimonials'][0]) && !empty($data['testimonials'][0]['status']) && !empty($data['testimonials'][0]['reviews']) && count($data['testimonials'][0]['reviews']);
+        $testimonialData = !empty($data->testimonials) && !empty($data->testimonials[0]) && !empty($data->testimonials[0]['status']) && !empty($data->testimonials[0]['reviews']) && count($data->testimonials[0]['reviews']);
 
         if ($testimonialData) {
-            // return dd($data['testimonials'][0]['reviews']);
             return $data['testimonials'][0]['reviews'];
         } else {
             return [];
         }
     }
 
-    public function checkIsRestaurantClose(array $apiData, array $restaurantData)
+    public function checkIsRestaurantClose(stdClass $apiData, ?Restaurant $restaurantData = null)
     {
-        $appName = $restaurantData['name'] ?? $apiData['name'] ?? config('app.name');
+        $appName = $restaurantData?->name ?? $apiData->name ?? config('app.name');
 
-        $statusApi = $apiData['status'] ?? false;
-        $statusRestaurant = $restaurantData['status'] ?? false;
+        $statusApi = $apiData->status ?? false;
+        $statusRestaurant = $restaurantData?->status ?? false;
 
-        $statusMsgApi = $apiData['status_msg'] ?? '';
-        $statusMsgRestaurant = $restaurantData['status_msg'] ?? '';
+        $statusMsgApi = $apiData->status_msg ?? '';
+        $statusMsgRestaurant = $restaurantData?->status_msg ?? '';
 
-        return [
+        return (object) [
             'name' => $appName,
             'status' => $statusApi || $statusRestaurant,
             'message' => $statusApi ? $statusMsgApi : $statusMsgRestaurant,
@@ -85,9 +82,9 @@ class RestaurantService
         is_current_time_between($startDatetime, $endDatetime);
     }
 
-    public function getMetaDataDetails(array $data): ?array
+    public function getMetaDataDetails(?Restaurant $data = null): ?array
     {
-        $data = !empty($data['meta_details']) ? $data['meta_details'][0] : [];
+        $data = !empty($data->meta_details) ? $data->meta_details[0] : [];
         return [
             "main_page_status" => $data['main_page_status'] ?? false,
             "main_page_title" => $data['main_page_title'] ?? null,
@@ -121,46 +118,50 @@ class RestaurantService
         ];
     }
 
-    public function getSocialMediaDetails(array $data): ?array
+    public function getSocialMediaDetails(?Restaurant $data = null): ?array
     {
+        $sm = !empty($data->social_links) ? $data->social_links[0] : [];
+        $customSm = !empty($data->custom_social_links) ? $data->custom_social_links[0] : [];
         return [
-            "instagram_link_status" => $data['instagram_link_status'] ?? false,
-            "instagram_link" => $data['instagram_link'] ?? null,
+            "status" => $sm['status'] ?? false, // Whole Show/Hide
 
-            "facebook_link_status" => $data['facebook_link_status'] ?? false,
-            "facebook_link" => $data['facebook_link'] ?? null,
+            "instagram_link_status" => $sm['instagram_link_status'] ?? false,
+            "instagram_link" => $sm['instagram_link'] ?? null,
 
-            "tripadvisor_link_status" => $data['tripadvisor_link_status'] ?? false,
-            "tripadvisor_link" => $data['tripadvisor_link'] ?? null,
+            "facebook_link_status" => $sm['facebook_link_status'] ?? false,
+            "facebook_link" => $sm['facebook_link'] ?? null,
 
-            "whatsapp_link_status" => $data['whatsapp_link_status'] ?? false,
-            "whatsapp_link" => $data['whatsapp_link'] ?? null,
+            "tripadvisor_link_status" => $sm['tripadvisor_link_status'] ?? false,
+            "tripadvisor_link" => $sm['tripadvisor_link'] ?? null,
 
-            "youtube_link_status" => $data['youtube_link_status'] ?? false,
-            "youtube_link" => $data['youtube_link'] ?? null,
+            "whatsapp_link_status" => $sm['whatsapp_link_status'] ?? false,
+            "whatsapp_link" => $sm['whatsapp_link'] ?? null,
 
-            "google_review_link_status" => $data['google_review_link_status'] ?? false,
-            "google_review_link" => $data['google_review_link'] ?? null,
+            "youtube_link_status" => $sm['youtube_link_status'] ?? false,
+            "youtube_link" => $sm['youtube_link'] ?? null,
 
-            "custom_link_1_status" => $data['custom_link_1_status'] ?? false,
-            "custom_link_1_url" => $data['custom_link_1_url'] ?? null,
-            "custom_link_1_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_1_img'] ?? null, 'public'),
+            "google_review_link_status" => $sm['google_review_link_status'] ?? false,
+            "google_review_link" => $sm['google_review_link'] ?? null,
 
-            "custom_link_2_status" => $data['custom_link_2_status'] ?? false,
-            "custom_link_2_url" => $data['custom_link_2_url'] ?? null,
-            "custom_link_2_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_2_img'] ?? null, 'public'),
+            "custom_link_1_status" => $customSm['custom_link_1_status'] ?? false,
+            "custom_link_1_url" => $customSm['custom_link_1_url'] ?? null,
+            "custom_link_1_img" => Helpers::get_img_full_url('custom_social_links', $customSm['custom_link_1_img'] ?? null, 'public'),
 
-            "custom_link_3_status" => $data['custom_link_3_status'] ?? false,
-            "custom_link_3_url" => $data['custom_link_3_url'] ?? null,
-            "custom_link_3_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_3_img'] ?? null, 'public'),
+            "custom_link_2_status" => $customSm['custom_link_2_status'] ?? false,
+            "custom_link_2_url" => $customSm['custom_link_2_url'] ?? null,
+            "custom_link_2_img" => Helpers::get_img_full_url('custom_social_links', $customSm['custom_link_2_img'] ?? null, 'public'),
 
-            "custom_link_4_status" => $data['custom_link_4_status'] ?? false,
-            "custom_link_4_url" => $data['custom_link_4_url'] ?? null,
-            "custom_link_4_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_4_img'] ?? null, 'public'),
+            "custom_link_3_status" => $customSm['custom_link_3_status'] ?? false,
+            "custom_link_3_url" => $customSm['custom_link_3_url'] ?? null,
+            "custom_link_3_img" => Helpers::get_img_full_url('custom_social_links', $customSm['custom_link_3_img'] ?? null, 'public'),
 
-            "custom_link_5_status" => $data['custom_link_5_status'] ?? "0",
-            "custom_link_5_img" => $data['custom_link_5_img'] ?? null,
-            "custom_link_5_url" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_5_url'] ?? null, 'public'),
+            "custom_link_4_status" => $customSm['custom_link_4_status'] ?? false,
+            "custom_link_4_url" => $customSm['custom_link_4_url'] ?? null,
+            "custom_link_4_img" => Helpers::get_img_full_url('custom_social_links', $customSm['custom_link_4_img'] ?? null, 'public'),
+
+            "custom_link_5_status" => $customSm['custom_link_5_status'] ?? "0",
+            "custom_link_5_img" => $customSm['custom_link_5_img'] ?? null,
+            "custom_link_5_url" => Helpers::get_img_full_url('custom_social_links', $customSm['custom_link_5_url'] ?? null, 'public'),
         ];
     }
 }

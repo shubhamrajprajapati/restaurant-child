@@ -23,10 +23,9 @@ class RestaurantController extends Controller
 
         $restaurantCloseInfo = $this->restaurantService->checkIsRestaurantClose($apiData, $data);
 
-        if($restaurantCloseInfo['status']){
+        if($restaurantCloseInfo->status){
             return view('layouts.partials.close-restaurant', ['data' => $restaurantCloseInfo]);
         }
-
         
         $rollingMessage = $this->restaurantService->getRollingMessage();
         $testimonials = $this->restaurantService->getTestimonialsData($data);

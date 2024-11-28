@@ -23,39 +23,31 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationItem;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        // Guard against missing 'restaurants' table
-        if (!Schema::hasTable('restaurants')) {
-            // Fallback if the table doesn't exist (e.g., during composer install)
-            $restaurantData = [
-                'name' => config('app.name'),
-                'favicon_full_url' => null,
-                'logo_full_url' => null,
-            ];
-        } else {
-            $superAdminApiService = new SuperAdminApiService();
-            $restaurantDetailFromSuperAdminPanel = $superAdminApiService->requestData();
-
-            $restaurantData = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
-        }
-
         return $panel
             ->default()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->id('admin')
             ->path('admin')
 
-            ->brandName(fn() => $restaurantData['name'] ?? config('app.name'))
-            ->favicon(fn() => Helpers::get_img_full_url(null,$restaurantData['favicon_full_url'] ?? null,'public', 'favicon'))
-            ->brandLogo(fn() => Helpers::get_img_full_url(null,$restaurantData['logo_full_url'] ?? null,'public', 'logo'))
-            ->brandLogoHeight('2rem')
+            // Using bootUsing to handle cache and database checks globally
+            ->bootUsing(function (Panel $panel) {
+                $superAdminApiServiceData = Cache::get('super_admin_api_data');
+
+                $restaurantData = Restaurant::whereDomain($superAdminApiServiceData->domain)?->first() ?? $superAdminApiServiceData;
+            
+                // Set up the brand data
+                $panel->brandName(fn() => $restaurantData->name ?? config('app.name'))
+                    ->favicon(fn() => Helpers::get_img_full_url(null, $restaurantData->favicon_full_url ?? null, 'public', 'favicon'))
+                    ->brandLogo(fn() => Helpers::get_img_full_url(null, $restaurantData->logo_full_url ?? null, 'public', 'logo'))
+                    ->brandLogoHeight('2rem');
+            })
 
             ->login()
             ->registration()

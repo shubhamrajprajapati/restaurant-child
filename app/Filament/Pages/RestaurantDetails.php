@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -58,12 +59,12 @@ class RestaurantDetails extends Page
 
     public function mount()
     {
-        $restaurantDetailFromSuperAdminPanel = app('api.data');
-        $this->record = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first();
+        $superAdminApiServiceData = Cache::get('super_admin_api_data');
+        $this->record = Restaurant::whereDomain($superAdminApiServiceData->domain)?->first();
 
         $this->tabQuery = empty($this->record) ? null : Request::query('tab'); // If null, the "Restaurant Details" tab will be shown by default.
 
-        $data = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
+        $data = $this->record?->toArray() ?? (array) $superAdminApiServiceData;
 
         // Convert other_details to array if it's a JSON
         if (isset($data['other_details']) && !is_array($data['other_details'])) {
