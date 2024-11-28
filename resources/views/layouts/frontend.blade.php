@@ -14,11 +14,11 @@
 <body>
     <!--HEADER START-->
 
-    @if(!empty($rollingMessage) && !empty($rollingMessage->contents))
+    @isset($rollingMessage)
         <marquee class="res_marquees_css">
             {{ $rollingMessage }}
         </marquee>
-    @endif
+    @endisset(!empty($) && !empty($rollingMessage->contents))
 
     @include('layouts.partials.frontend.header', compact('metadata'))
 

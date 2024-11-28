@@ -23,7 +23,9 @@
     @endpush
 
     {{-- Check $content Variable whats should in it & also $common_alt_title --}}
-    <x-slot name="rollingMessage">{{ $rollingMessage }}</x-slot>
+    @if ($rollingMessage)
+        <x-slot name="rollingMessage">{{ $rollingMessage }}</x-slot>
+    @endif
 
     <!--MAIN CONTENT START-->
     {{-- Hero Section --}}
@@ -264,7 +266,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Testimonial Section --}}
     @if (count($testimonials) > 0)
         <div id="reviews" class="review_main_border container-fluid d_m_tb_60 m_m_tb_40">
