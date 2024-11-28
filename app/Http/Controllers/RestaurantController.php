@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ColorTheme;
+use App\Models\PageEdit;
 use App\Services\PageEditService;
 use App\Services\RestaurantService;
 
@@ -25,13 +27,18 @@ class RestaurantController extends Controller
             return view('layouts.partials.close-restaurant', ['data' => $restaurantCloseInfo]);
         }
 
-
-        $rollingMessage = $this->restaurantService->getRollingMessage($data);
+        
+        $rollingMessage = $this->restaurantService->getRollingMessage();
         $testimonials = $this->restaurantService->getTestimonialsData($data);
+
+        $metadata = $this->restaurantService->getMetaDataDetails($data);
+        $socialMedia = $this->restaurantService->getSocialMediaDetails($data);
 
         $homePageData = new PageEditService();
         $homePageData = $homePageData->getHomePageData();
 
-        return view('home', compact('apiData', 'data', 'rollingMessage', 'homePageData', 'testimonials'));
+        $colorTheme = ColorTheme::whereActive(true)->first();
+
+        return view('home', compact('apiData', 'data', 'rollingMessage', 'homePageData', 'testimonials', 'metadata', 'socialMedia', 'colorTheme'));
     }
 }

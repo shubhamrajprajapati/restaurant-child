@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\CentralLogics\Helpers;
 use App\Models\Restaurant;
+use App\Models\RollingMessage;
 
 class RestaurantService
 {
@@ -24,19 +26,20 @@ class RestaurantService
         return $data;
     }
 
-    public function getRollingMessage(array $data = null): ?string
+    public function getRollingMessage(): ?string
     {
-        $rollingData = $data['rolling_messages'][0] ?? null;
+        $rollingMsgData = RollingMessage::first();
 
-        if ($rollingData) {
+        if ($rollingMsgData) {
             // Check for holiday message
-            if ($this->isValidHoliday($rollingData)) {
-                return $rollingData['holiday_msg'] ?? null;
+            if ($this->isValidHoliday($rollingMsgData)) {
+                return $rollingMsgData?->holiday_marquee;
             }
 
             // Check for regular message
-            if (!empty($rollingData['regular_status'])) {
-                return $rollingData['regular_active_msg'] ?? null;
+            if ($rollingMsgData?->marquee_status && $rollingMsgData?->active_marquee_no > 0) {
+                $marqueeColName = "marquee_{$rollingMsgData->active_marquee_no}";
+                return $rollingMsgData?->$marqueeColName;
             }
         }
 
@@ -48,26 +51,10 @@ class RestaurantService
         $testimonialData = !empty($data['testimonials']) && !empty($data['testimonials'][0]) && !empty($data['testimonials'][0]['status']) && !empty($data['testimonials'][0]['reviews']) && count($data['testimonials'][0]['reviews']);
 
         if ($testimonialData) {
-            return $data[0]['reviews'];
+            // return dd($data['testimonials'][0]['reviews']);
+            return $data['testimonials'][0]['reviews'];
         } else {
-            return [
-                [
-                    'name' => 'John Doe',
-                    'review' => 'Awesome! you can change this testimonial in the admin panel.',
-                ],
-                [
-                    'name' => 'Lorem',
-                    'review' => "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, facilis.",
-                ],
-                [
-                    'name' => 'Ratan Raj',
-                    'review' => "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti dignissimos ipsa reiciendis magni ea praesentium.",
-                ],
-                [
-                    'name' => 'Octell',
-                    'review' => "tempore, quasi iste consectetur harum quis, minus praesentium excepturi quia explicabo quisquam maxime dolor",
-                ],
-            ];
+            return [];
         }
     }
 
@@ -88,17 +75,92 @@ class RestaurantService
         ];
     }
 
-    private function isValidHoliday(array $data): bool
+    private function isValidHoliday(RollingMessage $data): bool
     {
-        // Safely access required keys with default values
-        $holidayStatus = !empty($data['holiday_status']);
-        $startDate = $data['holiday_start_date'] ?? null;
-        $endDate = $data['holiday_end_date'] ?? null;
+        $holidayStatus = $data?->holiday_marquee_status;
+        $startDatetime = $data?->start_datetime;
+        $endDatetime = $data?->end_datetime;
 
-        return !empty($data['holiday_msg']) &&
-        $holidayStatus &&
-        $startDate &&
-        $endDate &&
-        is_current_time_between($startDate, $endDate);
+        return $holidayStatus && $startDatetime && $endDatetime &&
+        is_current_time_between($startDatetime, $endDatetime);
+    }
+
+    public function getMetaDataDetails(array $data): ?array
+    {
+        $data = !empty($data['meta_details']) ? $data['meta_details'][0] : [];
+        return [
+            "main_page_status" => $data['main_page_status'] ?? false,
+            "main_page_title" => $data['main_page_title'] ?? null,
+            "main_page_description" => $data['main_page_description'] ?? null,
+            "main_page_keywords" => $data['main_page_keywords'] ?? "",
+
+            "reviews_page_status" => $data['reviews_page_status'] ?? false,
+            "reviews_page_title" => $data['reviews_page_title'] ?? null,
+            "reviews_page_description" => $data['reviews_page_description'] ?? null,
+            "reviews_page_keywords" => $data['reviews_page_keywords'] ?? "",
+
+            "reservation_page_status" => $data['reservation_page_status'] ?? false,
+            "reservation_page_title" => $data['reservation_page_title'] ?? null,
+            "reservation_page_description" => $data['reservation_page_description'] ?? null,
+            "reservation_page_keywords" => $data['reservation_page_keywords'] ?? "",
+
+            "restaurant_menu_page_status" => $data['restaurant_menu_page_status'] ?? false,
+            "restaurant_menu_page_title" => $data['restaurant_menu_page_title'] ?? null,
+            "restaurant_menu_page_description" => $data['restaurant_menu_page_description'] ?? null,
+            "restaurant_menu_page_keywords" => $data['restaurant_menu_page_keywords'] ?? "",
+
+            "takeaway_menu_page_status" => $data['takeaway_menu_page_status'] ?? false,
+            "takeaway_menu_page_keywords" => $data['takeaway_menu_page_keywords'] ?? "",
+            "takeaway_menu_page_title" => $data['takeaway_menu_page_title'] ?? null,
+            "takeaway_menu_page_description" => $data['takeaway_menu_page_description'] ?? null,
+
+            "order_online_page_status" => $data['order_online_page_status'] ?? false,
+            "order_online_page_keywords" => $data['order_online_page_keywords'] ?? "",
+            "order_online_page_title" => $data['order_online_page_title'] ?? null,
+            "order_online_page_description" => $data['order_online_page_description'] ?? null,
+        ];
+    }
+
+    public function getSocialMediaDetails(array $data): ?array
+    {
+        return [
+            "instagram_link_status" => $data['instagram_link_status'] ?? false,
+            "instagram_link" => $data['instagram_link'] ?? null,
+
+            "facebook_link_status" => $data['facebook_link_status'] ?? false,
+            "facebook_link" => $data['facebook_link'] ?? null,
+
+            "tripadvisor_link_status" => $data['tripadvisor_link_status'] ?? false,
+            "tripadvisor_link" => $data['tripadvisor_link'] ?? null,
+
+            "whatsapp_link_status" => $data['whatsapp_link_status'] ?? false,
+            "whatsapp_link" => $data['whatsapp_link'] ?? null,
+
+            "youtube_link_status" => $data['youtube_link_status'] ?? false,
+            "youtube_link" => $data['youtube_link'] ?? null,
+
+            "google_review_link_status" => $data['google_review_link_status'] ?? false,
+            "google_review_link" => $data['google_review_link'] ?? null,
+
+            "custom_link_1_status" => $data['custom_link_1_status'] ?? false,
+            "custom_link_1_url" => $data['custom_link_1_url'] ?? null,
+            "custom_link_1_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_1_img'] ?? null, 'public'),
+
+            "custom_link_2_status" => $data['custom_link_2_status'] ?? false,
+            "custom_link_2_url" => $data['custom_link_2_url'] ?? null,
+            "custom_link_2_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_2_img'] ?? null, 'public'),
+
+            "custom_link_3_status" => $data['custom_link_3_status'] ?? false,
+            "custom_link_3_url" => $data['custom_link_3_url'] ?? null,
+            "custom_link_3_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_3_img'] ?? null, 'public'),
+
+            "custom_link_4_status" => $data['custom_link_4_status'] ?? false,
+            "custom_link_4_url" => $data['custom_link_4_url'] ?? null,
+            "custom_link_4_img" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_4_img'] ?? null, 'public'),
+
+            "custom_link_5_status" => $data['custom_link_5_status'] ?? "0",
+            "custom_link_5_img" => $data['custom_link_5_img'] ?? null,
+            "custom_link_5_url" => Helpers::get_img_full_url('custom_social_links', $data['custom_link_5_url'] ?? null, 'public'),
+        ];
     }
 }

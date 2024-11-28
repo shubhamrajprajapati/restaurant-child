@@ -78,26 +78,6 @@ class AdminPanelProvider extends PanelProvider
                 'Technical Settings', // These are less frequently updated but critical for technical configurations.
             ])
             ->navigationItems([
-                NavigationItem::make('Rolling Message')
-                    ->url(
-                        fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-rolling-message-tab', 
-                            'type' => '-regular-tab'
-                        ])
-                    )
-                    ->icon('heroicon-o-tv')
-                    ->group('Restaurant Information')
-                    ->sort(3),
-                NavigationItem::make('Holiday Message')
-                    ->url(
-                        fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-rolling-message-tab', 
-                            'type' => '-holiday-tab'
-                        ])
-                    )
-                    ->icon('heroicon-o-stop')
-                    ->group('Restaurant Information')
-                    ->sort(4),
                 NavigationItem::make('Reservation Settings')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([

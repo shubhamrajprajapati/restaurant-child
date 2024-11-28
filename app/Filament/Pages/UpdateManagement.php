@@ -9,6 +9,8 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 
 class UpdateManagement extends Page
@@ -110,8 +112,12 @@ class UpdateManagement extends Page
                             ->action(function () {
                                 $notification = new \stdClass();
                                 try {
-                                    $applicationOptimize = shell_exec('cd .. && php artisan optimize 2>&1');
-                                    $filamentOptimize = shell_exec('cd .. && php artisan filament:optimize 2>&1');
+                                    $applicationOptimize = Artisan::call('optimize');
+                                    // shell_exec('cd .. && php artisan optimize 2>&1');
+                                    $filamentOptimize = Artisan::call('filament:optimize');
+                                    // shell_exec('cd .. && php artisan filament:optimize 2>&1');
+
+                                    return redirect()->to(URL::previous());
 
                                     $notification->title = "Optimization Completed Successfully!";
                                     $notification->body = "<div class='overflow-x-auto'><pre>{$applicationOptimize} {$filamentOptimize}</pre><br></div>";
@@ -131,15 +137,19 @@ class UpdateManagement extends Page
                             ->size(ActionSize::ExtraSmall)
                             ->color('danger')
                             ->action(function () {
-                                $applicationOptimize = shell_exec('cd .. && php artisan optimize:clear 2>&1');
-                                $filamentOptimize = shell_exec('cd .. && php artisan filament:optimize-clear 2>&1');
+                                $applicationOptimize = Artisan::call('optimize:clear');
+                                // shell_exec('cd .. && php artisan optimize:clear 2>&1');
+                                // $filamentOptimize = Artisan::call('filament:optimize-clear');
+                                // shell_exec('cd .. && php artisan filament:optimize-clear 2>&1');
+                                return redirect()->to(URL::previous());
 
                                 $notification = new \stdClass();
                                 $notification->title = "Optimization Cleared Successfully!";
                                 $notification->body = "<div class='overflow-x-auto'><pre>{$applicationOptimize} {$filamentOptimize}</pre><br></div>";
                                 $notification->type = 'success';
 
-                                return $this->sendNotification($notification);
+                                $this->sendNotification($notification);
+
                             }),
                     ])
                     ->collapsible()

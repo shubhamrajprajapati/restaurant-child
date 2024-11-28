@@ -11,11 +11,13 @@ if (!function_exists('is_current_time_between')) {
      * @param string $endDatetime
      * @return bool
      */
-    function is_current_time_between($startDatetime, $endDatetime)
+    function is_current_time_between($startDatetime, $endDatetime): bool
     {
         $currentTime = Carbon::now();
-        $startDateTime = Carbon::parse($startDatetime);
-        $endDateTime = Carbon::parse($endDatetime);
+
+        // Ensure both startDatetime and endDatetime are Carbon instances
+        $startDateTime = $startDatetime instanceof Carbon ? $startDatetime : Carbon::parse($startDatetime);
+        $endDateTime = $endDatetime instanceof Carbon ? $endDatetime : Carbon::parse($endDatetime);
 
         return $currentTime->between($startDateTime, $endDateTime);
     }
@@ -79,3 +81,52 @@ if (!function_exists('limit_str')) {
         return $string;
     }
 }
+
+if (!function_exists('invert_hex_color')) {
+    /**
+     * Invert a hex color code.
+     *
+     * @param string|null $hexColor The hex color code (e.g., "#FFFFFF" or "FFFFFF").
+     * @return string|null The inverted hex color code (e.g., "#000000"), or null if input is invalid.
+     */
+    function invert_hex_color(?string $hexColor): ?string
+    {
+        if (!$hexColor) {
+            return null;
+        }
+
+        $hexColor = ltrim($hexColor, '#');
+
+        // Validate the hex color (either 3 or 6 characters)
+        if (!preg_match('/^[a-fA-F0-9]{3}$|^[a-fA-F0-9]{6}$/', $hexColor)) {
+            return null; // Return null for invalid input instead of throwing an exception
+        }
+
+        // Expand shorthand hex (e.g., "ABC" -> "AABBCC")
+        if (strlen($hexColor) === 3) {
+            $hexColor = preg_replace('/(.)/', '$1$1', $hexColor);
+        }
+
+        // Invert the color
+        $r = 255 - hexdec(substr($hexColor, 0, 2));
+        $g = 255 - hexdec(substr($hexColor, 2, 2));
+        $b = 255 - hexdec(substr($hexColor, 4, 2));
+
+        return sprintf("#%02X%02X%02X", $r, $g, $b);
+    }
+}
+
+
+if (!function_exists('is_valid_hex_color')) {
+    /**
+     * Validate if a given value is a valid hex color.
+     *
+     * @param string|null $hexColor
+     * @return bool
+     */
+    function is_valid_hex_color(?string $hexColor): bool
+    {
+        return preg_match('/^#?[a-fA-F0-9]{3}$|^#?[a-fA-F0-9]{6}$/', $hexColor);
+    }
+}
+

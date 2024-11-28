@@ -297,7 +297,7 @@ class HomePageEdit extends Page
                         Forms\Components\Placeholder::make('Created By')
                             ->content(fn(): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString() ?? auth()?->user()?->name),
+                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
 
             ]);

@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(PageEditSeeder::class);
         $this->call(RestaurantSeeder::class);
+        $this->call(ColorThemeSeeder::class);
+        $this->call(RollingMessageSeeder::class);
 
         // $this->call(RestaurantSeeder::class);
 

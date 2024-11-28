@@ -2,8 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\HolidayMessagePage;
 use App\Filament\Pages\HomePageEdit;
 use App\Filament\Pages\RestaurantDetails;
+use App\Filament\Pages\RollingMessagePage;
 use App\Filament\Resources\ReservationResource;
 use App\Filament\Resources\UserResource;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -25,7 +27,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Restaurant Details', 'icon' => 'building-storefront', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl()],
             ['label' => 'Homepage Edits', 'icon' => 'pencil-square', 'design' => 'bg-gradient-cursor-design-1', 'url' => HomePageEdit::getUrl()],
 
-            ['label' => 'Rolling Message', 'icon' => 'tv', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-rolling-message-tab', 'type' => '-regular-tab'])],
+            ['label' => 'Rolling Message', 'icon' => 'tv', 'design' => 'bg-gradient-cursor-design-2', 'url' => RollingMessagePage::getUrl()],
             ['label' => 'Reviews', 'icon' => 'star', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-testimonials-tab'])],
             ['label' => 'Opening Hours', 'icon' => 'clock', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
 
@@ -39,7 +41,7 @@ class MenuStatsOverview extends BaseWidget
 
             ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Designs', 'icon' => 'sparkles', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
-            ['label' => 'Holiday Message', 'icon' => 'stop', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl(['tab' => '-rolling-message-tab', 'type' => '-holiday-tab'])],
+            ['label' => 'Holiday Message', 'icon' => 'bell', 'design' => 'bg-gradient-cursor-design-1', 'url' => HolidayMessagePage::getUrl()],
 
             ['label' => 'Scripts', 'icon' => 'code-bracket-square', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
             ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],

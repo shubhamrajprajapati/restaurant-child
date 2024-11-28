@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\PageEdit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -11,6 +12,7 @@ use Illuminate\Support\Str;
  */
 class PageEditFactory extends Factory
 {
+    protected $model = PageEdit::class;
     /**
      * Define the model's default state.
      *

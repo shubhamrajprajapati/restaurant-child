@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\URL;
 class RestaurantDetails extends Page
 {
     use FilamentCustomPageAuthorization;
-    protected static string $resource = Restaurant::class;
     protected static ?string $model = Restaurant::class;
     protected static string $view = 'filament.pages.restaurant-details';
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
@@ -109,6 +108,7 @@ class RestaurantDetails extends Page
         if (empty($data['social_links']) || !is_array($data['social_links'])) {
             $data['social_links'] = [
                 [
+                    'status' => false,
                     'instagram_link_status' => false,
                     'facebook_link_status' => false,
                     'tripadvisor_link_status' => false,
@@ -212,7 +212,7 @@ class RestaurantDetails extends Page
     {
         return $form
             ->statePath('data')
-            ->model(Restaurant::class)
+            ->model(static::getModel())
             ->schema([
                 Forms\Components\Tabs::make()
                     ->persistTabInQueryString()
@@ -825,6 +825,19 @@ class RestaurantDetails extends Page
                                     ->reorderable(false)
                                     ->hiddenLabel()
                                     ->schema([
+                                        Forms\Components\ToggleButtons::make('status')
+                                            ->label('Visibility')
+                                            ->hiddenLabel()
+                                            ->inline()
+                                            ->boolean()
+                                            ->options([
+                                                1 => 'Show SM Icons',
+                                                0 => 'Hide SM Icons',
+                                            ])
+                                            ->icons([
+                                                1 => 'heroicon-m-eye',
+                                                0 => 'heroicon-m-eye-slash',
+                                            ]),
                                         Forms\Components\Section::make()
                                             ->compact()
                                             ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
@@ -1189,228 +1202,6 @@ class RestaurantDetails extends Page
                                     ]),
 
                             ]),
-                        Forms\Components\Tabs\Tab::make('Rolling Message')
-                            ->id('rolling-message')
-                            ->icon('heroicon-o-tv')
-                            ->extraAttributes(['class' => '!p-0'])
-                            ->visible(fn() => $this->tabQuery == '-rolling-message-tab')
-                            ->schema([
-                                Forms\Components\Repeater::make('rolling_messages')
-                                    ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
-                                    ->addable(false)
-                                    ->deletable(false)
-                                    ->reorderable(false)
-                                    ->hiddenLabel()
-                                    ->schema([
-                                        Forms\Components\Tabs::make()
-                                            ->persistTabInQueryString('type')
-                                            ->contained(false)
-                                            ->tabs([
-                                                Forms\Components\Tabs\Tab::make('Regular Rolling Message')
-                                                    ->id('regular')
-                                                    ->icon('heroicon-m-chat-bubble-bottom-center-text')
-                                                    ->schema([
-                                                        Forms\Components\ToggleButtons::make('regular_status')
-                                                            ->label('Visibility')
-                                                            ->hiddenLabel()
-                                                            ->columnSpanFull()
-                                                            ->inline()
-                                                            ->boolean()
-                                                            ->required()
-                                                            ->options([
-                                                                1 => 'Show Rolling Message',
-                                                                0 => 'Hide Rolling Message',
-                                                            ])
-                                                            ->icons([
-                                                                1 => 'heroicon-m-eye',
-                                                                0 => 'heroicon-m-eye-slash',
-                                                            ]),
-                                                        Forms\Components\Section::make()
-                                                            ->compact()
-                                                            ->columns(['sm' => 12])
-                                                            ->extraAttributes(['class' => '!bg-green-300/20 dark:!bg-green-400/5 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
-                                                            ->schema([
-                                                                Forms\Components\TextInput::make('regular_active_msg')
-                                                                    ->label('Active Rolling Message')
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('No active rolling message. Click the toggle button to activate one.')
-                                                                    ->prefixIcon('heroicon-m-sparkles')
-                                                                    ->prefixIconColor('success')
-                                                                    ->columnSpanFull()
-                                                                    ->requiredIfAccepted('regular_status')
-                                                                    ->readOnly(),
-                                                            ]),
-                                                        Forms\Components\Section::make()
-                                                            ->compact()
-                                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
-                                                            ->columns(['sm' => 12])
-                                                            ->schema([
-                                                                Forms\Components\TextInput::make('regular_msg_1')
-                                                                    ->label('Rolling Message 1')
-                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Enter message')
-                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
-                                                                    ->helperText(new HtmlString('This is the <b>DEFAULT ROLLING MESSAGE</b>'))
-                                                                    ->prefixIconColor('primary')
-                                                                    ->live(onBlur: true)
-                                                                    ->requiredIfAccepted('regular_msg_1_status'),
-                                                                Forms\Components\Toggle::make('regular_msg_1_status')
-                                                                    ->label('Active')
-                                                                    ->inlineLabel()
-                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
-                                                                    ->onIcon('heroicon-m-eye')
-                                                                    ->offIcon('heroicon-m-eye-slash')
-                                                                    ->onColor('success')
-                                                                    ->offColor('danger')
-                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_1')))
-                                                                    ->dehydrated()
-                                                                    ->live(onBlur: true)
-                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
-                                                                        if ($state == 1) {
-                                                                            $set('regular_active_msg', $get('regular_msg_1'));
-                                                                            $set('regular_msg_2_status', false);
-                                                                            $set('regular_msg_3_status', false);
-                                                                        }
-
-                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
-                                                                        && !$get('regular_msg_2_status')
-                                                                        && !$get('regular_msg_3_status');
-
-                                                                        if ($allMessagesInactive) {
-                                                                            $set('regular_active_msg', null);
-                                                                        }
-                                                                    }),
-                                                                Forms\Components\TextInput::make('regular_msg_2')
-                                                                    ->label('Rolling Message 2')
-                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Enter message')
-                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
-                                                                    ->prefixIconColor('primary')
-                                                                    ->live(onBlur: true)
-                                                                    ->requiredIfAccepted('regular_msg_2_status'),
-                                                                Forms\Components\Toggle::make('regular_msg_2_status')
-                                                                    ->label('Active')
-                                                                    ->inlineLabel()
-                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
-                                                                    ->onIcon('heroicon-m-eye')
-                                                                    ->offIcon('heroicon-m-eye-slash')
-                                                                    ->onColor('success')
-                                                                    ->offColor('danger')
-                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_2')))
-                                                                    ->dehydrated()
-                                                                    ->live(onBlur: true)
-                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
-                                                                        if ($state == 1) {
-                                                                            $set('regular_msg_1_status', false);
-                                                                            $set('regular_active_msg', $get('regular_msg_2'));
-                                                                            $set('regular_msg_3_status', false);
-                                                                        }
-
-                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
-                                                                        && !$get('regular_msg_2_status')
-                                                                        && !$get('regular_msg_3_status');
-
-                                                                        if ($allMessagesInactive) {
-                                                                            $set('regular_active_msg', null);
-                                                                        }
-                                                                    }),
-                                                                Forms\Components\TextInput::make('regular_msg_3')
-                                                                    ->label('Rolling Message 3')
-                                                                    ->columnSpan(['sm' => 9, 'md' => 10])
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Enter message')
-                                                                    ->prefixIcon('heroicon-m-chat-bubble-bottom-center-text')
-                                                                    ->prefixIconColor('primary')
-                                                                    ->live(onBlur: true)
-                                                                    ->requiredIfAccepted('regular_msg_3_status'),
-                                                                Forms\Components\Toggle::make('regular_msg_3_status')
-                                                                    ->label('Active')
-                                                                    ->inlineLabel()
-                                                                    ->columnSpan(['sm' => 3, 'md' => 2])
-                                                                    ->onIcon('heroicon-m-eye')
-                                                                    ->offIcon('heroicon-m-eye-slash')
-                                                                    ->onColor('success')
-                                                                    ->offColor('danger')
-                                                                    ->disabled(fn(Forms\Get $get): bool => empty($get('regular_msg_3')))
-                                                                    ->dehydrated()
-                                                                    ->live(onBlur: true)
-                                                                    ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
-                                                                        if ($state == 1) {
-                                                                            $set('regular_msg_1_status', false);
-                                                                            $set('regular_msg_2_status', false);
-                                                                            $set('regular_active_msg', $get('regular_msg_3'));
-                                                                        }
-
-                                                                        $allMessagesInactive = !$get('regular_msg_1_status')
-                                                                        && !$get('regular_msg_2_status')
-                                                                        && !$get('regular_msg_3_status');
-
-                                                                        if ($allMessagesInactive) {
-                                                                            $set('regular_active_msg', null);
-                                                                        }
-                                                                    }),
-                                                            ]),
-                                                    ]),
-                                                Forms\Components\Tabs\Tab::make('Holiday Rolling Message')
-                                                    ->id('holiday')
-                                                    ->icon('heroicon-m-stop')
-                                                    ->schema([
-                                                        Forms\Components\Section::make()
-                                                            ->compact()
-                                                            ->columns(['sm' => 12])
-                                                            ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0 [&>div>div>div]:items-center'])
-                                                            ->schema([
-                                                                Forms\Components\ToggleButtons::make('holiday_status')
-                                                                    ->label('Visibility')
-                                                                    ->inlineLabel()
-                                                                    ->columnSpanFull()
-                                                                    ->inline()
-                                                                    ->boolean()
-                                                                    ->required()
-                                                                    ->options([
-                                                                        1 => 'Show Holiday Message',
-                                                                        0 => 'Hide Holiday Message',
-                                                                    ])
-                                                                    ->icons([
-                                                                        1 => 'heroicon-m-eye',
-                                                                        0 => 'heroicon-m-eye-slash',
-                                                                    ]),
-                                                                Forms\Components\TextInput::make('holiday_msg')
-                                                                    ->label('Message')
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Enter holiday message')
-                                                                    ->prefixIcon('heroicon-m-link')
-                                                                    ->prefixIconColor('primary')
-                                                                    ->columnSpanFull()
-                                                                    ->requiredIfAccepted('holiday_status'),
-                                                                Forms\Components\DateTimePicker::make('holiday_start_date')
-                                                                    ->label('Start Date/Time')
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Pick Start Date/Time')
-                                                                    ->prefixIcon('heroicon-m-calendar')
-                                                                    ->prefixIconColor('primary')
-                                                                    ->columnSpanFull()
-                                                                    ->native(false)
-                                                                    ->minDate(Carbon::today())
-                                                                    ->requiredIfAccepted('holiday_status'),
-                                                                Forms\Components\DateTimePicker::make('holiday_end_date')
-                                                                    ->label('End Date/Time')
-                                                                    ->inlineLabel()
-                                                                    ->placeholder('Pick Start Date/Time')
-                                                                    ->prefixIcon('heroicon-m-calendar')
-                                                                    ->prefixIconColor('primary')
-                                                                    ->columnSpanFull()
-                                                                    ->native(false)
-                                                                    ->minDate(Carbon::today())
-                                                                    ->requiredIfAccepted('holiday_status'),
-                                                            ]),
-                                                    ]),
-                                            ]),
-                                    ]),
-
-                            ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->id('settings')
                             ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || empty($this->tabQuery) || $this->tabQuery == 'undefined'))
@@ -1543,7 +1334,7 @@ class RestaurantDetails extends Page
                         Forms\Components\Placeholder::make('Created By')
                             ->content(fn(): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString() ?? auth()?->user()?->name),
+                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
 
             ]);
