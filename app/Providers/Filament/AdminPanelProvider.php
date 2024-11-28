@@ -24,15 +24,27 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Schema;
+
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $superAdminApiService = new SuperAdminApiService();
-        $restaurantDetailFromSuperAdminPanel = $superAdminApiService->requestData();
+        // Guard against missing 'restaurants' table
+        if (!Schema::hasTable('restaurants')) {
+            // Fallback if the table doesn't exist (e.g., during composer install)
+            $restaurantData = [
+                'name' => config('app.name'),
+                'favicon_full_url' => null,
+                'logo_full_url' => null,
+            ];
+        } else {
+            $superAdminApiService = new SuperAdminApiService();
+            $restaurantDetailFromSuperAdminPanel = $superAdminApiService->requestData();
 
-        $restaurantData = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
+            $restaurantData = Restaurant::where(['domain' => $restaurantDetailFromSuperAdminPanel['domain']])?->first()?->toArray() ?? $restaurantDetailFromSuperAdminPanel;
+        }
 
         return $panel
             ->default()
