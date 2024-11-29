@@ -4,20 +4,16 @@ namespace App\Filament\Pages;
 
 use App\Models\Restaurant;
 use App\Traits\FilamentCustomPageAuthorization;
-use DateTime;
-use DateTimeZone;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class RestaurantDetails extends Page
 {
@@ -34,22 +30,16 @@ class RestaurantDetails extends Page
 
     public function getTitle(): string | Htmlable
     {
-        $customTitle = match ($this->tabQuery) {
+        $customTitle = match (fn() => $this->tabQuery) {
             '-testimonials-tab' => 'Reviews',
-            '-timezone-tab' => 'Timezone (' . date_default_timezone_get() . ")",
             '-meta-details-tab' => 'Meta Details',
             '-social-media-links-tab' => 'Social Media Links',
-            '-rolling-message-tab' => 'Rolling Message',
 
             default => static::$title ?? (string) str(class_basename(static::class))
                 ->kebab()
                 ->replace('-', ' ')
                 ->title(),
         };
-
-        if (Request::query('tab') == '-rolling-message-tab' && Request::query('type') == '-holiday-tab') {
-            $customTitle = 'Holiday Message';
-        }
 
         $this->customTitle = empty($this->customTitle) ? $customTitle : $this->customTitle;
 
@@ -62,18 +52,13 @@ class RestaurantDetails extends Page
         $superAdminApiServiceData = Cache::get('super_admin_api_data');
         $this->record = Restaurant::whereDomain($superAdminApiServiceData->domain)?->first();
 
-        $this->tabQuery = empty($this->record) ? null : Request::query('tab'); // If null, the "Restaurant Details" tab will be shown by default.
+        $this->tabQuery = empty($this->record) ? 'null' : Request::query('tab'); // If null, the "Restaurant Details" tab will be shown by default.
 
         $data = $this->record?->toArray() ?? (array) $superAdminApiServiceData;
 
         // Convert other_details to array if it's a JSON
         if (isset($data['other_details']) && !is_array($data['other_details'])) {
             $data['other_details'] = json_decode($data['other_details'], true);
-        }
-
-        // Set default value for timezone
-        if (!isset($data['timezone'])) {
-            $data['timezone'] = config('app.timezone');
         }
 
         // Set default value for testimonials
@@ -133,16 +118,6 @@ class RestaurantDetails extends Page
             ];
         }
 
-        // Set default value for custom rolling message
-        if (empty($data['rolling_messages']) || !is_array($data['rolling_messages'])) {
-            $data['rolling_messages'] = [
-                [
-                    'regular_status' => false,
-                    'holiday_status' => false,
-                ],
-            ];
-        }
-
         $this->data = $data;
         $this->form->fill($this->data);
     }
@@ -197,16 +172,11 @@ class RestaurantDetails extends Page
             ->success()
             ->send();
 
-        // Check if app name or timezone changes then update in .env file
+        // Check if app name changes then update in .env file
         if (!empty($data['name']) && $data['name'] != config('app.name')) {
-            update_env_value('APP_NAME', $this->record->name, false);
+            update_env_value('APP_NAME', $this->record->name);
             return redirect()->to(URL::previous());
         }
-        if (!empty($data['timezone']) && $data['timezone'] != config('app.timezone')) {
-            update_env_value('APP_TIMEZONE', $this->record->timezone, false);
-            return redirect()->to(URL::previous());
-        }
-
     }
 
     public function form(Form $form): Form
@@ -223,7 +193,7 @@ class RestaurantDetails extends Page
                             ->icon('heroicon-o-building-storefront')
                             ->columnSpanFull()
                             ->columns(['lg' => 12])
-                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || empty($this->tabQuery) || $this->tabQuery == 'undefined'))
+                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
                             ->schema([
                                 Forms\Components\Hidden::make('installation_token'),
                                 Forms\Components\Section::make('Restaurant Logo Upload')
@@ -409,36 +379,6 @@ class RestaurantDetails extends Page
                                             ->label('Installed')
                                             ->helperText('Toggle to indicate if the Restaurant App is installed. If the installation is incomplete, switch off to enable the installation button in the system check. This option is intended for debugging and processing manual installations.')
                                             ->columnSpanFull(),
-                                    ]),
-                            ]),
-                        Forms\Components\Tabs\Tab::make('Timezone')
-                            ->id('timezone')
-                            ->icon('heroicon-m-globe-alt')
-                            ->visible(fn() => $this->tabQuery == '-timezone-tab')
-                            ->schema([
-                                Forms\Components\Section::make('')
-                                    ->compact()
-                                    ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-slate-950/30 ring-0 dark:ring-0'])
-                                    ->columnSpan(['lg' => 12])
-                                    ->schema([
-                                        Forms\Components\Select::make('timezone')
-                                            ->label('Timezone')
-                                            ->prefixIcon('heroicon-o-clock')
-                                            ->options(collect(DateTimeZone::listIdentifiers())->mapWithKeys(function ($timezone) {
-                                                $dateTimeZone = new DateTimeZone($timezone);
-                                                $dateTime = new DateTime('now', $dateTimeZone);
-                                                $offset = $dateTimeZone->getOffset($dateTime);
-                                                $formattedOffset = sprintf('%+03d:%02d', $offset / 3600, abs($offset % 3600) / 60);
-
-                                                return [$timezone => "(UTC $formattedOffset) $timezone"];
-                                            }))
-                                            ->placeholder('Select timezone')
-                                            ->inlineLabel()
-                                            ->searchable()
-                                            ->native(false)
-                                            ->preload()
-                                            ->default(config('app.timezone'))
-                                            ->required(),
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Reviews')
@@ -1205,7 +1145,7 @@ class RestaurantDetails extends Page
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->id('settings')
-                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || empty($this->tabQuery) || $this->tabQuery == 'undefined'))
+                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
                             ->schema([
                                 Forms\Components\Section::make('Close Restaurant')
                                     ->description('Manage the status and message for temporarily closing your restaurant.')

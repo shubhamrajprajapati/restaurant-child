@@ -6,6 +6,7 @@ use App\Filament\Pages\HolidayMessagePage;
 use App\Filament\Pages\HomePageEdit;
 use App\Filament\Pages\RestaurantDetails;
 use App\Filament\Pages\RollingMessagePage;
+use App\Filament\Pages\TimeZonePage;
 use App\Filament\Resources\ColorThemeResource;
 use App\Filament\Resources\ReservationResource;
 use App\Filament\Resources\UserResource;
@@ -45,7 +46,7 @@ class MenuStatsOverview extends BaseWidget
             ['label' => 'Holiday Message', 'icon' => 'bell', 'design' => 'bg-gradient-cursor-design-1', 'url' => HolidayMessagePage::getUrl()],
 
             ['label' => 'Scripts', 'icon' => 'code-bracket-square', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
-            ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-timezone-tab'])],
+            ['label' => 'Time Zone', 'icon' => 'globe-alt', 'design' => 'bg-gradient-cursor-design-2', 'url' => TimeZonePage::getUrl()],
             ['label' => 'Reservations & Orders', 'icon' => 'shopping-cart', 'design' => 'bg-gradient-cursor-design-2', 'url' => ReservationResource::getUrl()],
         ];
 

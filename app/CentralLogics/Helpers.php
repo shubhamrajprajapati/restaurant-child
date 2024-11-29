@@ -58,14 +58,14 @@ class Helpers
 
     public static function appName(){
         $restaurantData = self::getRestaurantOrApiData();
-        return $restaurantData['name'] ?? config('app.name');
+        return $restaurantData->name ?? config('app.name');
     }
     public static function appFavicon(){
         $restaurantData = self::getRestaurantOrApiData();
-        return Helpers::get_img_full_url(null, $restaurantData['favicon_full_url'] ?? null, 'public', 'favicon');
+        return Helpers::get_img_full_url(null, $restaurantData->favicon_full_url ?? null, 'public', 'favicon');
     }
     public static function appLogo(){
         $restaurantData = self::getRestaurantOrApiData();
-        return Helpers::get_img_full_url(null, $restaurantData['favicon_logo_url'] ?? null, 'public', 'logo');
+        return Helpers::get_img_full_url(null, $restaurantData->favicon_logo_url ?? null, 'public', 'logo');
     }
 }

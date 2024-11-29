@@ -145,15 +145,6 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-code-bracket-square')
                     ->group('Technical Settings')
                     ->sort(2),
-                NavigationItem::make('Timezone')
-                    ->url(
-                        fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-timezone-tab'
-                        ])
-                    )
-                    ->icon('heroicon-o-globe-alt')
-                    ->group('Technical Settings')
-                    ->sort(3),
             ])
             ->middleware([
                 EncryptCookies::class,
