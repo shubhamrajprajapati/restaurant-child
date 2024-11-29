@@ -65,19 +65,19 @@ function copyToClipboard(element) {
 }
 
 //menu
-jQuery('#main-nav').stellarNav();
-jQuery('#main-nav').stellarNav({
-  theme     : 'plain', 
-  breakpoint: 768, 
-  menuLabel: 'MENU', 
-  phoneBtn: false, 
-  locationBtn: false,
-  sticky     : false, 
-  openingSpeed: 250,
-  closingDelay: 250,
-  position: 'static',
-  showArrows: true,
-  closeBtn     : false,
-  scrollbarFix: false,
-  mobileMode: false
-});
+// jQuery('#main-nav').stellarNav();
+// jQuery('#main-nav').stellarNav({
+//   theme     : 'plain', 
+//   breakpoint: 768, 
+//   menuLabel: 'MENU', 
+//   phoneBtn: false, 
+//   locationBtn: false,
+//   sticky     : false, 
+//   openingSpeed: 250,
+//   closingDelay: 250,
+//   position: 'static',
+//   showArrows: true,
+//   closeBtn     : false,
+//   scrollbarFix: false,
+//   mobileMode: false
+// });
