@@ -22,7 +22,7 @@ class RollingMessageFactory extends Factory
         return [
             'id' => Str::uuid(),
             // 'restaurant_id' => Restaurant::factory(), // No need for now since we want only one restaurant
-            'marquee_status' => $this->faker->boolean(),
+            'marquee_status' => true,
             'active_marquee_no' => 2,
             'marquee_1' => $this->faker->sentence(),
             'marquee_2' => "Welcome to " . config('app.name') . " | You can change this rolling message from the admin panel if you are an admin.",

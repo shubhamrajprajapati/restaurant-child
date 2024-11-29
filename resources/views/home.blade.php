@@ -357,7 +357,7 @@
                 const navbar = document.querySelector('.navbar');
 
                 function adjustMarqueeMargin() {
-                    const resMarqueesHeight = resMarquees.offsetHeight;
+                    const resMarqueesHeight = resMarquees && resMarquees.offsetHeight;
                     if (window.scrollY === 0) {
                         navbar.style.marginTop = resMarqueesHeight + 'px';
                     } else {
@@ -374,7 +374,9 @@
                         adjustMarqueeMargin();
                     }
                 }
-                adjustMarqueeMargin();
+                @if ($rollingMessage)
+                    adjustMarqueeMargin();
+                @endif
                 window.addEventListener('scroll', handleScroll);
                 window.addEventListener('resize', adjustMarqueeMargin);
             });

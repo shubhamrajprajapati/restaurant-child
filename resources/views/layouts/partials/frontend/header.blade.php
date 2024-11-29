@@ -2,7 +2,7 @@
 
 <header class="displayinpc">
     <div class="header_gap">
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="margin-top: 41px;">
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light">
             <div class="container-fluid m_nopadding">
                 <a class="navbar-brand" href="{{ route('home') }}">
                     <img src="{{ asset('assets/img/logos/logo_white.png') }}" alt="{{ config('app.name') }}"
