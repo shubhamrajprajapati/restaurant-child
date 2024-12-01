@@ -6,7 +6,8 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon {
+enum UserRoleEnum: string implements HasColor, HasIcon, HasLabel
+{
     case ADMIN = 'ADMIN';
     // case EDITOR = 'EDITOR';
     // case CONTRIBUTOR = 'CONTRIBUTOR';
@@ -74,7 +75,7 @@ enum UserRoleEnum: string implements HasLabel, HasColor, HasIcon {
      * role specified for a user.
      * Use: {$model}->role->getColor();
      */
-    public function getColor(): string | array | null
+    public function getColor(): string|array|null
     {
         return match ($this) {
             self::ADMIN => 'success',

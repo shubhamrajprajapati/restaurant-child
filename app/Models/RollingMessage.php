@@ -13,7 +13,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class RollingMessage extends Model implements Sortable
 {
-    use HasFactory, SoftDeletes, SortableTrait, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes, SortableTrait;
 
     /**
      * The table associated with the model.
@@ -94,6 +94,7 @@ class RollingMessage extends Model implements Sortable
             return $this->holiday_marquee_start_date
                 ->setTimeFrom($this->holiday_marquee_start_time); // Use setTimeFrom for clean merging
         }
+
         return null;
     }
 
@@ -105,6 +106,7 @@ class RollingMessage extends Model implements Sortable
             return $this->holiday_marquee_end_date
                 ->setTimeFrom($this->holiday_marquee_end_time); // Use setTimeFrom for clean merging
         }
+
         return null;
     }
 

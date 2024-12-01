@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 class PageEditFactory extends Factory
 {
     protected $model = PageEdit::class;
+
     /**
      * Define the model's default state.
      *

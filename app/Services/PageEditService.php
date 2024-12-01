@@ -8,6 +8,7 @@ use App\Models\PageEdit;
 class PageEditService
 {
     public static string $home_page_key = 'home_page';
+
     public function getHomePageData()
     {
         $appName = config('app.name');
@@ -29,11 +30,11 @@ class PageEditService
 
             <p>Join us at Nani Antwerp, where exceptional service meets exquisite cuisine, and let us elevate your dining experience to new heights.</p>",
 
-            'about_section_front_img' =>  Helpers::get_img_full_url('page_customization', $homePageData['about_section_front_img'] ?? null, 'public', 'about_section_front_img'),
+            'about_section_front_img' => Helpers::get_img_full_url('page_customization', $homePageData['about_section_front_img'] ?? null, 'public', 'about_section_front_img'),
             'about_section_background_img' => Helpers::get_img_full_url('page_customization', $homePageData['about_section_background_img'] ?? null, 'public', 'about_section_background_img'),
 
-            'center_section_title' => $homePageData['center_section_title'] ?? "Book a Table",
-            'center_section_description' => $homePageData['center_section_description'] ?? "Fill up your informations in the Reservation Form and get you reservation confirmation through Mail.",
+            'center_section_title' => $homePageData['center_section_title'] ?? 'Book a Table',
+            'center_section_description' => $homePageData['center_section_description'] ?? 'Fill up your informations in the Reservation Form and get you reservation confirmation through Mail.',
             'center_section_caption' => $homePageData['center_section_caption'] ?? $appName,
             'center_section_front_img' => Helpers::get_img_full_url('page_customization', $homePageData['center_section_front_img'] ?? null, 'public', 'center_section_front_img'),
         ];

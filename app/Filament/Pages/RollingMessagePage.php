@@ -14,14 +14,23 @@ use Illuminate\Support\HtmlString;
 class RollingMessagePage extends Page
 {
     use FilamentCustomPageAuthorization;
+
     protected static ?string $model = RollingMessage::class;
+
     protected static string $view = 'filament.pages.rolling-message-page';
+
     protected static ?string $navigationIcon = 'heroicon-o-tv';
+
     protected static ?string $navigationGroup = 'Restaurant Information';
+
     protected static ?int $navigationSort = 3;
+
     protected static ?string $slug = 'rolling-message';
+
     protected static ?string $title = 'Rolling Message';
+
     public ?RollingMessage $record;
+
     public ?array $data = [];
 
     public function getSubheading(): string
@@ -59,7 +68,7 @@ class RollingMessagePage extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(empty($this->record) ? static::canCreate(): static::canEdit($this->record))
+                ->authorize(empty($this->record) ? static::canCreate() : static::canEdit($this->record))
                 ->formId('rolling_message')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -154,7 +163,7 @@ class RollingMessagePage extends Page
                             ->offIcon('heroicon-m-eye-slash')
                             ->onColor('success')
                             ->offColor('danger')
-                            ->disabled(fn(Forms\Get $get): bool => empty($get('marquee_1')))
+                            ->disabled(fn (Forms\Get $get): bool => empty($get('marquee_1')))
                             ->dehydrated(false)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
@@ -165,9 +174,9 @@ class RollingMessagePage extends Page
                                     $set('active_marquee_no', 1);
                                 }
 
-                                $allMessagesInactive = !$get('marquee_1_status')
-                                && !$get('marquee_2_status')
-                                && !$get('marquee_3_status');
+                                $allMessagesInactive = ! $get('marquee_1_status')
+                                && ! $get('marquee_2_status')
+                                && ! $get('marquee_3_status');
 
                                 if ($allMessagesInactive) {
                                     $set('active_marquee', null);
@@ -191,7 +200,7 @@ class RollingMessagePage extends Page
                             ->offIcon('heroicon-m-eye-slash')
                             ->onColor('success')
                             ->offColor('danger')
-                            ->disabled(fn(Forms\Get $get): bool => empty($get('marquee_2')))
+                            ->disabled(fn (Forms\Get $get): bool => empty($get('marquee_2')))
                             ->dehydrated(true)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
@@ -202,9 +211,9 @@ class RollingMessagePage extends Page
                                     $set('active_marquee_no', 2);
                                 }
 
-                                $allMessagesInactive = !$get('marquee_1_status')
-                                && !$get('marquee_2_status')
-                                && !$get('marquee_3_status');
+                                $allMessagesInactive = ! $get('marquee_1_status')
+                                && ! $get('marquee_2_status')
+                                && ! $get('marquee_3_status');
 
                                 if ($allMessagesInactive) {
                                     $set('active_marquee', null);
@@ -229,7 +238,7 @@ class RollingMessagePage extends Page
                             ->offIcon('heroicon-m-eye-slash')
                             ->onColor('success')
                             ->offColor('danger')
-                            ->disabled(fn(Forms\Get $get): bool => empty($get('marquee_3')))
+                            ->disabled(fn (Forms\Get $get): bool => empty($get('marquee_3')))
                             ->dehydrated(false)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, ?string $state) {
@@ -240,9 +249,9 @@ class RollingMessagePage extends Page
                                     $set('active_marquee_no', 3);
                                 }
 
-                                $allMessagesInactive = !$get('marquee_1_status')
-                                && !$get('marquee_2_status')
-                                && !$get('marquee_3_status');
+                                $allMessagesInactive = ! $get('marquee_1_status')
+                                && ! $get('marquee_2_status')
+                                && ! $get('marquee_3_status');
 
                                 if ($allMessagesInactive) {
                                     $set('active_marquee', null);
@@ -251,7 +260,7 @@ class RollingMessagePage extends Page
                             }),
                     ]),
                 Forms\Components\Section::make('Contribution Log')
-                    ->hidden(fn() => empty($this->record))
+                    ->hidden(fn () => empty($this->record))
                     ->columns(['lg' => 4])
                     ->collapsible()
                     ->collapsed()
@@ -259,13 +268,13 @@ class RollingMessagePage extends Page
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(): ?string => $this->record?->updater?->name),
+                            ->content(fn (): ?string => $this->record?->updater?->name),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(): ?string => $this->record?->updated_at?->diffForHumans()),
+                            ->content(fn (): ?string => $this->record?->updated_at?->diffForHumans()),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(): ?string => $this->record?->creator?->name),
+                            ->content(fn (): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
+                            ->content(fn (): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
             ]);
     }

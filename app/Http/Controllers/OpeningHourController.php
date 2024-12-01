@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class RollingMessageController extends Controller
+class OpeningHourController extends Controller
 {
     //
 }

@@ -13,14 +13,23 @@ use Filament\Pages\Page;
 class HomePageEdit extends Page
 {
     use FilamentCustomPageAuthorization;
+
     protected static string $resource = PageEdit::class;
+
     protected static ?string $model = PageEdit::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
+
     protected static ?string $navigationGroup = 'Website Content Management';
+
     protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.home-page-edit';
+
     private static string $key = 'home_page';
+
     public ?PageEdit $record;
+
     public ?array $data = [];
 
     public function mount()
@@ -45,7 +54,7 @@ class HomePageEdit extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(fn() => empty($this->record) ? static::canCreate(): static::canEdit($this->record))
+                ->authorize(fn () => empty($this->record) ? static::canCreate() : static::canEdit($this->record))
                 ->formId('homepage_edit_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -283,7 +292,7 @@ class HomePageEdit extends Page
                     ->persistTabInQueryString(),
 
                 Forms\Components\Section::make('Contribution Log')
-                    ->hidden(fn() => empty($this->record))
+                    ->hidden(fn () => empty($this->record))
                     ->columns(['lg' => 4])
                     ->collapsible()
                     ->collapsed()
@@ -291,16 +300,15 @@ class HomePageEdit extends Page
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(): ?string => $this->record?->updater?->name),
+                            ->content(fn (): ?string => $this->record?->updater?->name),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(): ?string => $this->record?->updated_at?->diffForHumans()),
+                            ->content(fn (): ?string => $this->record?->updated_at?->diffForHumans()),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(): ?string => $this->record?->creator?->name),
+                            ->content(fn (): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
+                            ->content(fn (): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
 
             ]);
     }
-
 }

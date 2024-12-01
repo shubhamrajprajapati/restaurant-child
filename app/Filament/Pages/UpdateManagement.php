@@ -16,16 +16,22 @@ use Illuminate\Support\HtmlString;
 class UpdateManagement extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
+
     protected static ?string $navigationGroup = 'Technical Settings';
+
     protected static ?int $navigationSort = 1;
+
     protected static string $view = 'filament.pages.update-management';
+
     public static bool $isUpdateAvailable = false;
+
     public static ?string $updates;
 
     public static function getNavigationBadge(): ?string
     {
         return empty(self::checkForGitUpdatesCmdResult()) ? 'Up-to-date' : 'New';
     }
+
     public static function getNavigationBadgeColor(): ?string
     {
         return empty(self::checkForGitUpdatesCmdResult()) ? 'success' : 'warning';
@@ -51,10 +57,10 @@ class UpdateManagement extends Page
 
         if ($showNotification) {
             Notification::make('check_for_updates_notification')
-                ->title(fn() => self::$isUpdateAvailable ? 'Update Available!' : 'No Updates Available')
-                ->body(fn() => self::$isUpdateAvailable ? 'A new update is ready to install. Click the button below to install the latest features and improvements.' : 'Your application is up to date! You are currently using the latest version with all features and improvements.')
-                ->color(fn() => self::$isUpdateAvailable ? 'success' : 'info')
-                ->icon(fn() => self::$isUpdateAvailable ? 'herocion-o-check-circle' : 'heroicon-o-information-circle')
+                ->title(fn () => self::$isUpdateAvailable ? 'Update Available!' : 'No Updates Available')
+                ->body(fn () => self::$isUpdateAvailable ? 'A new update is ready to install. Click the button below to install the latest features and improvements.' : 'Your application is up to date! You are currently using the latest version with all features and improvements.')
+                ->color(fn () => self::$isUpdateAvailable ? 'success' : 'info')
+                ->icon(fn () => self::$isUpdateAvailable ? 'herocion-o-check-circle' : 'heroicon-o-information-circle')
                 ->send();
         }
     }
@@ -64,13 +70,13 @@ class UpdateManagement extends Page
         return Carbon::now()->format('h:i A T');
     }
 
-    public function sendNotification(\stdClass $data = null): void
+    public function sendNotification(?\stdClass $data = null): void
     {
         Notification::make()
             ->title($data?->title)
             ->body($data?->body)
-            ->status(fn() => $data?->type ?? ($data?->status ? 'success' : 'danger'))
-            ->icon(fn() => isset($data?->icon) ? ($data?->icon ?: null): null)
+            ->status(fn () => $data?->type ?? ($data?->status ? 'success' : 'danger'))
+            ->icon(fn () => isset($data?->icon) ? ($data?->icon ?: null) : null)
             ->send();
     }
 
@@ -81,11 +87,11 @@ class UpdateManagement extends Page
         self::checkGitUpdates();
 
         // After a successful rebase, install npm dependencies, build assets, and run database migrations if applicable
-        $npmAndMigrationsOutput = empty($output) ? null : shell_exec("php artisan migrate --force 2>&1 && npm install 2>&1 && npm run build 2>&1");
+        $npmAndMigrationsOutput = empty($output) ? null : shell_exec('php artisan migrate --force 2>&1 && npm install 2>&1 && npm run build 2>&1');
 
         Notification::make('install_and_update_now_notification')
             ->title('Update Installed Successfully!')
-            ->body(join(["The latest update has been installed. Thank you for keeping your application up to date! You can now enjoy the new features and improvements.", empty($output) ? null : "<br><br><div class='overflow-x-auto'><pre>{$output}</pre><br><div>", empty($npmAndMigrationsOutput) ? null : "<br><br><div class='overflow-x-auto'><pre>{$npmAndMigrationsOutput}</pre><br><div>"]))
+            ->body(implode(['The latest update has been installed. Thank you for keeping your application up to date! You can now enjoy the new features and improvements.', empty($output) ? null : "<br><br><div class='overflow-x-auto'><pre>{$output}</pre><br><div>", empty($npmAndMigrationsOutput) ? null : "<br><br><div class='overflow-x-auto'><pre>{$npmAndMigrationsOutput}</pre><br><div>"]))
             ->success()
             ->send();
     }
@@ -94,8 +100,8 @@ class UpdateManagement extends Page
     {
         return $infolist
             ->state([
-                'updates' => fn() => self::$updates,
-                'heading' => fn() => self::$isUpdateAvailable ? 'Updates available' : 'You\'re up to date',
+                'updates' => fn () => self::$updates,
+                'heading' => fn () => self::$isUpdateAvailable ? 'Updates available' : 'You\'re up to date',
                 'deployment_history' => 'Deployment History: Recent Changes',
             ])
             ->schema([
@@ -110,7 +116,7 @@ class UpdateManagement extends Page
                             ->size(ActionSize::ExtraSmall)
                             ->color('success')
                             ->action(function () {
-                                $notification = new \stdClass();
+                                $notification = new \stdClass;
                                 try {
                                     $applicationOptimize = Artisan::call('optimize');
                                     // shell_exec('cd .. && php artisan optimize 2>&1');
@@ -119,11 +125,11 @@ class UpdateManagement extends Page
 
                                     return redirect()->to(URL::previous());
 
-                                    $notification->title = "Optimization Completed Successfully!";
+                                    $notification->title = 'Optimization Completed Successfully!';
                                     $notification->body = "<div class='overflow-x-auto'><pre>{$applicationOptimize} {$filamentOptimize}</pre><br></div>";
                                     $notification->type = 'success';
                                 } catch (\Exception $e) {
-                                    $notification->title = "Some error occurred!";
+                                    $notification->title = 'Some error occurred!';
                                     $notification->body = "<div class='overflow-x-auto'><pre>{$e->getMessage()}</pre><br></div>";
                                     $notification->type = 'danger';
                                     $this->sendNotification($notification);
@@ -138,13 +144,14 @@ class UpdateManagement extends Page
                             ->color('danger')
                             ->action(function () {
                                 $applicationOptimize = Artisan::call('optimize:clear');
+
                                 // shell_exec('cd .. && php artisan optimize:clear 2>&1');
                                 // $filamentOptimize = Artisan::call('filament:optimize-clear');
                                 // shell_exec('cd .. && php artisan filament:optimize-clear 2>&1');
                                 return redirect()->to(URL::previous());
 
-                                $notification = new \stdClass();
-                                $notification->title = "Optimization Cleared Successfully!";
+                                $notification = new \stdClass;
+                                $notification->title = 'Optimization Cleared Successfully!';
                                 $notification->body = "<div class='overflow-x-auto'><pre>{$applicationOptimize} {$filamentOptimize}</pre><br></div>";
                                 $notification->type = 'success';
 
@@ -155,11 +162,11 @@ class UpdateManagement extends Page
                     ->collapsible()
                     ->schema([
                         Infolists\Components\TextEntry::make('heading')
-                            ->icon(fn() => self::$isUpdateAvailable ? 'heroicon-o-arrow-path' : 'heroicon-s-check-circle')
-                            ->color(fn() => self::$isUpdateAvailable ? 'warning' : 'success')
-                            ->iconColor(fn() => self::$isUpdateAvailable ? 'warning' : 'success')
+                            ->icon(fn () => self::$isUpdateAvailable ? 'heroicon-o-arrow-path' : 'heroicon-s-check-circle')
+                            ->color(fn () => self::$isUpdateAvailable ? 'warning' : 'success')
+                            ->iconColor(fn () => self::$isUpdateAvailable ? 'warning' : 'success')
                             ->hiddenLabel()
-                            ->helperText(fn() => 'Last checked: Today, ' . $this->getFormattedTime())
+                            ->helperText(fn () => 'Last checked: Today, '.$this->getFormattedTime())
                             ->size(TextEntrySize::Large)
                             ->suffixActions([
                                 Infolists\Components\Actions\Action::make('install_update')
@@ -189,8 +196,8 @@ class UpdateManagement extends Page
                             ->visible(self::$isUpdateAvailable)
                             ->html()
                             ->extraAttributes(['class' => 'overflow-x-auto'])
-                            ->prefix(fn() => new HtmlString('<pre>'))
-                            ->suffix(fn() => new HtmlString('</pre><br>')),
+                            ->prefix(fn () => new HtmlString('<pre>'))
+                            ->suffix(fn () => new HtmlString('</pre><br>')),
                     ]),
                 Infolists\Components\TextEntry::make('deployment_history')
                     ->hiddenLabel()

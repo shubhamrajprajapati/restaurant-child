@@ -14,14 +14,23 @@ use Illuminate\Support\Carbon;
 class HolidayMessagePage extends Page
 {
     use FilamentCustomPageAuthorization;
+
     protected static ?string $model = RollingMessage::class;
+
     protected static string $view = 'filament.pages.holiday-message-page';
+
     protected static ?string $navigationIcon = 'heroicon-o-bell';
+
     protected static ?string $navigationGroup = 'Restaurant Information';
+
     protected static ?int $navigationSort = 4;
+
     protected static ?string $slug = 'holiday-message';
+
     protected static ?string $title = 'Holiday Message';
+
     public ?RollingMessage $record;
+
     public ?array $data = [];
 
     public function getSubheading(): string
@@ -59,7 +68,7 @@ class HolidayMessagePage extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(empty($this->record) ? static::canCreate(): static::canEdit($this->record))
+                ->authorize(empty($this->record) ? static::canCreate() : static::canEdit($this->record))
                 ->formId('holiday_message')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -173,7 +182,7 @@ class HolidayMessagePage extends Page
 
                 // Contribution Log
                 Forms\Components\Section::make('Contribution Log')
-                    ->hidden(fn() => empty($this->record))
+                    ->hidden(fn () => empty($this->record))
                     ->columns(['lg' => 4])
                     ->collapsible()
                     ->collapsed()
@@ -181,13 +190,13 @@ class HolidayMessagePage extends Page
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(): ?string => $this->record?->updater?->name),
+                            ->content(fn (): ?string => $this->record?->updater?->name),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(): ?string => $this->record?->updated_at?->diffForHumans()),
+                            ->content(fn (): ?string => $this->record?->updated_at?->diffForHumans()),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(): ?string => $this->record?->creator?->name),
+                            ->content(fn (): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
+                            ->content(fn (): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
             ]);
     }

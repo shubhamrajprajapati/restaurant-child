@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 class RestaurantFactory extends Factory
 {
     protected $model = Restaurant::class;
+
     /**
      * Define the model's default state.
      *
@@ -43,7 +44,7 @@ class RestaurantFactory extends Factory
                 [['key' => 'key1', 'value' => 'value1']],
                 [['key' => 'key2', 'value' => 'value2']],
             ]), // Optional JSON data
-            'updated_by_user_id' => User::factory(), // Assuming you have a User model factory
+            'updated_by_user_id' => User::factory(),
             'created_by_user_id' => User::factory(),
         ];
     }

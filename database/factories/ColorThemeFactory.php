@@ -24,7 +24,7 @@ class ColorThemeFactory extends Factory
      */
     public function definition(): array
     {
-        
+
         $isActive = static::$active;
         static::$active = false;
 

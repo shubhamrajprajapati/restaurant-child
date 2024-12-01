@@ -1,11 +1,9 @@
-@props(['metadata', 'socialMedia', 'colorTheme', 'homePageData'])
+@props(['metadata', 'socialMedia', 'colorTheme'])
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    @include('layouts.partials.frontend.partials.page-edit-data', ['pageEdit' => $homePageData])
-    {{-- @include('layouts.partials.frontend.partials.opening-hour-data') --}}
     @include('layouts.partials.frontend.partials.color-theme-data', compact('colorTheme'))
     @include('layouts.partials.frontend.head')
     @stack('styles')

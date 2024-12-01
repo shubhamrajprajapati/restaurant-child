@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ReservationSetting;
 use Illuminate\Database\Seeder;
 
 class ReservationSettingSeeder extends Seeder
@@ -12,6 +12,6 @@ class ReservationSettingSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        ReservationSetting::factory()->count(1)->create();
     }
 }

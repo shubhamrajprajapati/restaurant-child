@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Restaurant;
+use App\Models\OpeningHour;
 use App\Models\User;
 
-class RestaurantPolicy
+class OpeningHourPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +18,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can view a specific model.
      */
-    public function view(User $user, Restaurant $restaurant): bool
+    public function view(User $user, OpeningHour $openingHour): bool
     {
         return $user->role->isAdmin();
     }
@@ -34,7 +34,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can update a specific model.
      */
-    public function update(User $user, Restaurant $restaurant): bool
+    public function update(User $user, OpeningHour $openingHour): bool
     {
         return $user->role->isAdmin();
     }
@@ -42,7 +42,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can delete a specific model.
      */
-    public function delete(User $user, Restaurant $restaurant): bool
+    public function delete(User $user, OpeningHour $openingHour): bool
     {
         return $user->role->isAdmin();
     }
@@ -90,7 +90,7 @@ class RestaurantPolicy
     /**
      * Determine whether the user can restore a soft-deleted model.
      */
-    public function restore(User $user, Restaurant $restaurant): bool
+    public function restore(User $user, OpeningHour $openingHour): bool
     {
         return $user->role->isAdmin();
     }

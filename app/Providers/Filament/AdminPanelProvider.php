@@ -5,11 +5,11 @@ namespace App\Providers\Filament;
 use App\CentralLogics\Helpers;
 use App\Filament\Pages\RestaurantDetails;
 use App\Models\Restaurant;
-use App\Services\SuperAdminApiService;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -21,10 +21,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,11 +39,11 @@ class AdminPanelProvider extends PanelProvider
                 $superAdminApiServiceData = Cache::get('super_admin_api_data');
 
                 $restaurantData = Restaurant::whereDomain($superAdminApiServiceData->domain)?->first() ?? $superAdminApiServiceData;
-            
+
                 // Set up the brand data
-                $panel->brandName(fn() => $restaurantData->name ?? config('app.name'))
-                    ->favicon(fn() => Helpers::get_img_full_url(null, $restaurantData->favicon_full_url ?? null, 'public', 'favicon'))
-                    ->brandLogo(fn() => Helpers::get_img_full_url(null, $restaurantData->logo_full_url ?? null, 'public', 'logo'))
+                $panel->brandName(fn () => $restaurantData->name ?? config('app.name'))
+                    ->favicon(fn () => Helpers::get_img_full_url(null, $restaurantData->favicon_full_url ?? null, 'public', 'favicon'))
+                    ->brandLogo(fn () => Helpers::get_img_full_url(null, $restaurantData->logo_full_url ?? null, 'public', 'logo'))
                     ->brandLogoHeight('2rem');
             })
 
@@ -82,19 +80,10 @@ class AdminPanelProvider extends PanelProvider
                 'Technical Settings', // These are less frequently updated but critical for technical configurations.
             ])
             ->navigationItems([
-                NavigationItem::make('Reservation Settings')
-                    ->url(
-                        fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-reservation-settings-tab'
-                        ])
-                    )
-                    ->icon('heroicon-o-wrench')
-                    ->group('Customer Engagement')
-                    ->sort(1),
                 NavigationItem::make('Testimonials')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-testimonials-tab'
+                            'tab' => '-testimonials-tab',
                         ])
                     )
                     ->icon('heroicon-o-star')
@@ -103,7 +92,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Meta Details')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-meta-details-tab'
+                            'tab' => '-meta-details-tab',
                         ])
                     )
                     ->icon('heroicon-o-code-bracket')
@@ -112,25 +101,16 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Social Media Icons')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-social-media-links-tab'
+                            'tab' => '-social-media-links-tab',
                         ])
                     )
                     ->icon('heroicon-o-squares-2x2')
                     ->group('Website Content Management')
                     ->sort(6),
-                NavigationItem::make('Color Themes')
-                    ->url(
-                        fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-color-themes-tab'
-                        ])
-                    )
-                    ->icon('heroicon-o-swatch')
-                    ->group('Website Design Settings')
-                    ->sort(1),
                 NavigationItem::make('Designs')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-designs-tab'
+                            'tab' => '-designs-tab',
                         ])
                     )
                     ->icon('heroicon-o-sparkles')
@@ -139,7 +119,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Scripts')
                     ->url(
                         fn (): string => RestaurantDetails::getUrl([
-                            'tab' => '-scripts-tab'
+                            'tab' => '-scripts-tab',
                         ])
                     )
                     ->icon('heroicon-o-code-bracket-square')

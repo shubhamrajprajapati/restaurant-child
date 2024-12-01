@@ -14,9 +14,9 @@
 <li class="nav-item">
     <a class="nav-link" href="#contact">Contact Us</a>
 </li>
-@if ($metadata['reservation_page_status'])
+@if ($superAdminApiData?->reservation_status && $reservationSetting?->active)
     <li class="nav-item nav_buts">
-        <a class="nav-link" href="{{ url('reservation.php') }}">Reservation</a>
+        <a class="nav-link" href="{{ route('reservation.index') }}">Reservation</a>
     </li>
 @endif
 @if ($metadata['restaurant_menu_page_status'])

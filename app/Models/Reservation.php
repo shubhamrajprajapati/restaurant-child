@@ -32,5 +32,4 @@ class Reservation extends Model implements Sortable
         'persons' => 'integer',
         'order_column' => 'integer',
     ];
-
 }

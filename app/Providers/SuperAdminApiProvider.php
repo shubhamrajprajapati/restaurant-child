@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Exceptions\ApiDataException;
+use App\Models\ReservationSetting;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -31,6 +32,7 @@ class SuperAdminApiProvider extends ServiceProvider
 
         // Share the data globally in all views
         View::share('superAdminApiData', $apiData);
+        View::share('reservationSetting', ReservationSetting::whereActive(true)->first());
     }
 
     /**
@@ -59,6 +61,7 @@ class SuperAdminApiProvider extends ServiceProvider
      * Fetch the API data and return it as an object (recursively).
      *
      * @return object
+     *
      * @throws ApiDataException
      */
     private function fetchApiData()
@@ -86,7 +89,7 @@ class SuperAdminApiProvider extends ServiceProvider
     /**
      * Recursively convert arrays to objects.
      *
-     * @param mixed $array
+     * @param  mixed  $array
      * @return object
      */
     private function convertArrayToObject($array)
@@ -94,6 +97,7 @@ class SuperAdminApiProvider extends ServiceProvider
         if (is_array($array)) {
             return (object) array_map([$this, 'convertArrayToObject'], $array);
         }
+
         return $array;
     }
 }

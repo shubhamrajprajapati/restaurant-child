@@ -69,7 +69,7 @@ th {
     div {
         background-color: white;
         border-radius: 50%;
-        color: var(--bs-blue);
+        color: var(--tc_1);
     }
 }
 

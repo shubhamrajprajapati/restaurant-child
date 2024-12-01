@@ -23,7 +23,7 @@ class ReservationResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationLabel = "Reservations/Orders";
+    protected static ?string $navigationLabel = 'Reservations/Orders';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -140,7 +140,7 @@ class ReservationResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('time')
-                    ->time('h:m a'),
+                    ->time('h:i A'),
                 Tables\Columns\TextColumn::make('persons')
                     ->badge(),
                 Tables\Columns\TextColumn::make('comments')

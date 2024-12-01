@@ -2,7 +2,6 @@
 
 namespace App\CentralLogics;
 
-use App\Http\Controllers\RestaurantController;
 use App\Services\RestaurantService;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,8 +21,8 @@ class Helpers
         ];
 
         try {
-            if ($data && $disk == 's3' && Storage::disk('s3')->exists($path . '/' . $data)) {
-                return Storage::disk('s3')->url($path . '/' . $data);
+            if ($data && $disk == 's3' && Storage::disk('s3')->exists($path.'/'.$data)) {
+                return Storage::disk('s3')->url("$path/$data");
             }
         } catch (\Exception $e) {
         }
@@ -33,8 +32,8 @@ class Helpers
             return $data;
         }
 
-        if ($data && Storage::disk('public')->exists($path . '/' . $data)) {
-            return asset('storage') . '/' . $path . '/' . $data;
+        if ($data && Storage::disk('public')->exists($path.'/'.$data)) {
+            return asset('storage').'/'.$path.'/'.$data;
         }
 
         if (Request::is('api/*')) {
@@ -52,20 +51,29 @@ class Helpers
 
     public static function getRestaurantOrApiData()
     {
-        $restaurantService = new RestaurantService();
+        $restaurantService = new RestaurantService;
+
         return $restaurantService->getRestaurantData() ?? $restaurantService->getApiData();
     }
 
-    public static function appName(){
+    public static function appName()
+    {
         $restaurantData = self::getRestaurantOrApiData();
+
         return $restaurantData->name ?? config('app.name');
     }
-    public static function appFavicon(){
+
+    public static function appFavicon()
+    {
         $restaurantData = self::getRestaurantOrApiData();
+
         return Helpers::get_img_full_url(null, $restaurantData->favicon_full_url ?? null, 'public', 'favicon');
     }
-    public static function appLogo(){
+
+    public static function appLogo()
+    {
         $restaurantData = self::getRestaurantOrApiData();
+
         return Helpers::get_img_full_url(null, $restaurantData->favicon_logo_url ?? null, 'public', 'logo');
     }
 }

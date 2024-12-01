@@ -2,15 +2,17 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 
 use function Filament\authorize;
 
-trait FilamentCustomPageAuthorization {
+trait FilamentCustomPageAuthorization
+{
     protected static bool $shouldCheckPolicyExistence = true;
+
     protected static bool $shouldSkipAuthorization = false;
+
     protected static bool $isGloballySearchable = true;
 
     public static function getModel(): string
@@ -144,5 +146,4 @@ trait FilamentCustomPageAuthorization {
     {
         static::authorize('update', $record);
     }
-
 }

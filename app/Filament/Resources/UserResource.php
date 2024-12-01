@@ -81,13 +81,12 @@ class UserResource extends Resource
                             ->placeholder('Select a user role'),
                     ]),
 
-                Forms\Components\Section::make(fn(string $operation): string => $operation === 'create' ? 'Security Settings' : 'Update Password')
+                Forms\Components\Section::make(fn (string $operation): string => $operation === 'create' ? 'Security Settings' : 'Update Password')
                     ->collapsible()
                     ->compact()
                     ->icon('heroicon-m-lock-closed')
                     ->iconColor('success')
-                    ->description(fn(string $operation): string =>
-                        $operation === 'create'
+                    ->description(fn (string $operation): string => $operation === 'create'
                         ? 'Set up a secure password to protect the account.'
                         : 'Change the password to keep the account secure.'
                     )
@@ -96,36 +95,34 @@ class UserResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('password')
                             ->inlineLabel()
-                            ->label(fn(string $operation): string => $operation === 'create' ? 'Password' : 'New Password')
+                            ->label(fn (string $operation): string => $operation === 'create' ? 'Password' : 'New Password')
                             ->prefixIcon('heroicon-m-lock-closed')
                             ->prefixIconColor('success')
                             ->password()
                             ->confirmed()
                             ->revealable()
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->minLength(5)
                             ->maxLength(15)
-                            ->placeholder(fn(string $operation): string =>
-                                $operation === 'create'
+                            ->placeholder(fn (string $operation): string => $operation === 'create'
                                 ? 'Create a strong password'
                                 : 'Enter a new password'
                             ),
                         Forms\Components\TextInput::make('password_confirmation')
                             ->inlineLabel()
-                            ->label(fn(string $operation): string => $operation === 'create' ? 'Confirm Password' : 'Confirm New Password')
+                            ->label(fn (string $operation): string => $operation === 'create' ? 'Confirm Password' : 'Confirm New Password')
                             ->prefixIcon('heroicon-m-lock-closed')
                             ->prefixIconColor('success')
                             ->password()
                             ->revealable()
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
                             ->minLength(5)
                             ->maxLength(15)
-                            ->placeholder(fn(string $operation): string =>
-                                $operation === 'create'
+                            ->placeholder(fn (string $operation): string => $operation === 'create'
                                 ? 'Re-enter the password'
                                 : 'Re-enter the new password'
                             ),
@@ -172,10 +169,10 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
                     ->sortable()
-                    ->badge(fn() => UserRoleEnum::class),
-                    // ->summarize(Tables\Columns\Summarizers\Summarizer::make()
-                    //         ->label('User')
-                    //         ->using(fn(QueryBuilder $query) => $query->where('role', 'USER')->count('role')))
+                    ->badge(fn () => UserRoleEnum::class),
+                // ->summarize(Tables\Columns\Summarizers\Summarizer::make()
+                //         ->label('User')
+                //         ->using(fn(QueryBuilder $query) => $query->where('role', 'USER')->count('role')))
                 Tables\Columns\TextColumn::make('created_at')
                     ->icon('heroicon-m-calendar')
                     ->dateTime()

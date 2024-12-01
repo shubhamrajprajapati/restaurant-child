@@ -19,28 +19,31 @@ use Illuminate\Support\HtmlString;
 class TimeZonePage extends Page
 {
     use FilamentCustomPageAuthorization;
+
     protected static ?string $model = Restaurant::class;
+
     protected static string $view = 'filament.pages.time-zone-page';
+
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+
     protected static ?string $navigationGroup = 'Technical Settings';
+
     protected static ?int $navigationSort = 3;
+
     protected static ?string $slug = 'timezone';
+
     public ?Restaurant $record;
+
     public ?array $data = [];
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
-        return __("Timezone (" . date_default_timezone_get() . ")");
+        return __('Timezone ('.date_default_timezone_get().')');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __("Timezone (" . date_default_timezone_get() . ")");
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Restaurant::whereDomain(config('app.restaurant_url'))?->exists();
+        return __('Timezone ('.date_default_timezone_get().')');
     }
 
     public function getSubheading(): string
@@ -56,7 +59,7 @@ class TimeZonePage extends Page
             $this->data = $this->record?->toArray();
 
             // Set default value for timezone
-            if (!isset($this->data['timezone'])) {
+            if (! isset($this->data['timezone'])) {
                 $this->data['timezone'] = config('app.timezone');
             }
 
@@ -67,6 +70,7 @@ class TimeZonePage extends Page
                 ->body('Please configure and save your restaurant details before setting the timezone for the application.')
                 ->warning()
                 ->send();
+
             return redirect()->to(RestaurantDetails::getUrl());
         }
     }
@@ -84,7 +88,7 @@ class TimeZonePage extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(empty($this->record) ? static::canCreate(): static::canEdit($this->record))
+                ->authorize(empty($this->record) ? static::canCreate() : static::canEdit($this->record))
                 ->formId('timezone')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -116,8 +120,9 @@ class TimeZonePage extends Page
             ->send();
 
         // Check if app timezone changes then update in .env file
-        if (!empty($data['timezone']) && $data['timezone'] != config('app.timezone')) {
+        if (! empty($data['timezone']) && $data['timezone'] != config('app.timezone')) {
             update_env_value('APP_TIMEZONE', $this->record->timezone);
+
             return redirect()->to(URL::previous());
         }
 
@@ -130,7 +135,7 @@ class TimeZonePage extends Page
             ->model(static::getModel())
             ->schema([
                 Forms\Components\Section::make('Current DateTime')
-                    ->description(fn() => Carbon::now()->format('M d, Y h:i A T (l)'))
+                    ->description(fn () => Carbon::now()->format('M d, Y h:i A T (l)'))
                     ->compact()
                     ->extraAttributes(['class' => '!bg-slate-300/30 dark:!bg-blue-950/20 ring-0 dark:ring-0'])
                     ->columnSpan(['lg' => 12])
@@ -151,7 +156,7 @@ class TimeZonePage extends Page
                             ->searchable()
                             ->native(false)
                             ->live(onBlur: true)
-                            ->helperText(fn(?string $state) => new HtmlString("<b>Selected: </b>" . Carbon::now($state)->format('M d, Y h:i A T (l)')))
+                            ->helperText(fn (?string $state) => new HtmlString('<b>Selected: </b>'.Carbon::now($state)->format('M d, Y h:i A T (l)')))
                             ->preload()
                             ->default(config('app.timezone'))
                             ->required(),
@@ -159,7 +164,7 @@ class TimeZonePage extends Page
 
                 // Contribution Log
                 Forms\Components\Section::make('Contribution Log')
-                    ->hidden(fn() => empty($this->record))
+                    ->hidden(fn () => empty($this->record))
                     ->columns(['lg' => 4])
                     ->collapsible()
                     ->collapsed()
@@ -167,13 +172,13 @@ class TimeZonePage extends Page
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(): ?string => $this->record?->updater?->name),
+                            ->content(fn (): ?string => $this->record?->updater?->name),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(): ?string => $this->record?->updated_at?->diffForHumans()),
+                            ->content(fn (): ?string => $this->record?->updated_at?->diffForHumans()),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(): ?string => $this->record?->creator?->name),
+                            ->content(fn (): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
+                            ->content(fn (): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
             ]);
     }

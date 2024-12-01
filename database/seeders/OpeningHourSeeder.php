@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\PageEdit;
+use App\Models\OpeningHour;
 use Illuminate\Database\Seeder;
 
-class PageEditSeeder extends Seeder
+class OpeningHourSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        PageEdit::factory()->count(1)->create();
+        OpeningHour::factory()->count(1)->create();
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ColorThemeResource\Pages;
 
 use App\Filament\Resources\ColorThemeResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateColorTheme extends CreateRecord

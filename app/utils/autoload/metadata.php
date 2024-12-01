@@ -21,7 +21,6 @@ global $resdesc;
 global $reskeyword;
 global $menuyn;
 
-
 global $takeyn;
 global $tmentitle;
 global $tmendesc;
@@ -41,7 +40,6 @@ global $timezone;
 
 $metadata = MetaData::first();
 
-
 $mainpg = $metadata->mainpg;
 $pgtitle = $metadata->pgtitle;
 $pgdesc = $metadata->pgdesc;
@@ -55,7 +53,6 @@ $restitle = $metadata->restitle;
 $resdesc = $metadata->resdesc;
 $reskeyword = $metadata->reskeyword;
 $menuyn = $metadata->menuyn;
-
 
 $takeyn = $metadata->takeyn;
 $tmentitle = $metadata->tmentitle;

@@ -18,19 +18,28 @@ use Illuminate\Support\Str;
 class RestaurantDetails extends Page
 {
     use FilamentCustomPageAuthorization;
+
     protected static ?string $model = Restaurant::class;
+
     protected static string $view = 'filament.pages.restaurant-details';
+
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
+
     protected static ?string $navigationGroup = 'Restaurant Information';
+
     protected static ?int $navigationSort = 1;
+
     public ?Restaurant $record;
+
     public ?array $data = [];
+
     public ?string $customTitle = '';
+
     public ?string $tabQuery;
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
-        $customTitle = match (fn() => $this->tabQuery) {
+        $customTitle = match (fn () => $this->tabQuery) {
             '-testimonials-tab' => 'Reviews',
             '-meta-details-tab' => 'Meta Details',
             '-social-media-links-tab' => 'Social Media Links',
@@ -57,12 +66,12 @@ class RestaurantDetails extends Page
         $data = $this->record?->toArray() ?? (array) $superAdminApiServiceData;
 
         // Convert other_details to array if it's a JSON
-        if (isset($data['other_details']) && !is_array($data['other_details'])) {
+        if (isset($data['other_details']) && ! is_array($data['other_details'])) {
             $data['other_details'] = json_decode($data['other_details'], true);
         }
 
         // Set default value for testimonials
-        if (empty($data['testimonials']) || !is_array($data['testimonials'])) {
+        if (empty($data['testimonials']) || ! is_array($data['testimonials'])) {
             $data['testimonials'] = [
                 [
                     'status' => false,
@@ -77,7 +86,7 @@ class RestaurantDetails extends Page
         }
 
         // Set default value for meta details
-        if (empty($data['meta_details']) || !is_array($data['meta_details'])) {
+        if (empty($data['meta_details']) || ! is_array($data['meta_details'])) {
             $data['meta_details'] = [
                 [
                     'main_page_status' => false,
@@ -91,7 +100,7 @@ class RestaurantDetails extends Page
         }
 
         // Set default value for social media links
-        if (empty($data['social_links']) || !is_array($data['social_links'])) {
+        if (empty($data['social_links']) || ! is_array($data['social_links'])) {
             $data['social_links'] = [
                 [
                     'status' => false,
@@ -106,7 +115,7 @@ class RestaurantDetails extends Page
         }
 
         // Set default value for custom social media links
-        if (empty($data['custom_social_links']) || !is_array($data['custom_social_links'])) {
+        if (empty($data['custom_social_links']) || ! is_array($data['custom_social_links'])) {
             $data['custom_social_links'] = [
                 [
                     'custom_link_1_status' => false,
@@ -135,7 +144,7 @@ class RestaurantDetails extends Page
         return [
             'store' => Actions\Action::make('saveRecord')
                 ->label('Save Changes')
-                ->authorize(empty($this->record) ? static::canCreate(): static::canEdit($this->record))
+                ->authorize(empty($this->record) ? static::canCreate() : static::canEdit($this->record))
                 ->formId('restaurant_details')
                 ->extraAttributes(['type' => 'submit'])
                 ->action('save'),
@@ -173,8 +182,9 @@ class RestaurantDetails extends Page
             ->send();
 
         // Check if app name changes then update in .env file
-        if (!empty($data['name']) && $data['name'] != config('app.name')) {
+        if (! empty($data['name']) && $data['name'] != config('app.name')) {
             update_env_value('APP_NAME', $this->record->name);
+
             return redirect()->to(URL::previous());
         }
     }
@@ -193,7 +203,7 @@ class RestaurantDetails extends Page
                             ->icon('heroicon-o-building-storefront')
                             ->columnSpanFull()
                             ->columns(['lg' => 12])
-                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
+                            ->visible(fn () => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
                             ->schema([
                                 Forms\Components\Hidden::make('installation_token'),
                                 Forms\Components\Section::make('Restaurant Logo Upload')
@@ -385,7 +395,7 @@ class RestaurantDetails extends Page
                             ->id('testimonials')
                             ->icon('heroicon-o-star')
                             ->extraAttributes(['class' => '!p-0'])
-                            ->visible(fn() => $this->tabQuery == '-testimonials-tab')
+                            ->visible(fn () => $this->tabQuery == '-testimonials-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('testimonials')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -408,7 +418,7 @@ class RestaurantDetails extends Page
                                                 0 => 'heroicon-m-eye-slash',
                                             ]),
                                         Forms\Components\Repeater::make('reviews')
-                                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
+                                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
                                             ->maxItems(10)
                                             ->hiddenLabel()
                                             ->reorderableWithButtons()
@@ -436,7 +446,7 @@ class RestaurantDetails extends Page
                             ->id('meta-details')
                             ->icon('heroicon-o-code-bracket')
                             ->extraAttributes(['class' => '!p-0'])
-                            ->visible(fn() => $this->tabQuery == '-meta-details-tab')
+                            ->visible(fn () => $this->tabQuery == '-meta-details-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('meta_details')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -757,7 +767,7 @@ class RestaurantDetails extends Page
                             ->id('social-media-links')
                             ->icon('heroicon-o-link')
                             ->extraAttributes(['class' => '!p-0'])
-                            ->visible(fn() => $this->tabQuery == '-social-media-links-tab')
+                            ->visible(fn () => $this->tabQuery == '-social-media-links-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('social_links')
                                     ->extraAttributes(['class' => '[&>ul>div>li]:!ring-0 [&>ul>div>li]:dark:bg-transparent'])
@@ -1145,7 +1155,7 @@ class RestaurantDetails extends Page
                             ]),
                         Forms\Components\Tabs\Tab::make('Settings')
                             ->id('settings')
-                            ->visible(fn() => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
+                            ->visible(fn () => ($this->tabQuery == '-restaurant-details-tab' || $this->tabQuery == 'null'))
                             ->schema([
                                 Forms\Components\Section::make('Close Restaurant')
                                     ->description('Manage the status and message for temporarily closing your restaurant.')
@@ -1153,9 +1163,9 @@ class RestaurantDetails extends Page
                                     ->aside()
                                     ->schema([
                                         Forms\Components\Toggle::make('status')
-                                            ->label(fn(Forms\Get $get): ?string => $get('status') ? 'Closed Now' : 'Open Now')
+                                            ->label(fn (Forms\Get $get): ?string => $get('status') ? 'Closed Now' : 'Open Now')
                                             ->helperText(
-                                                fn(Forms\Get $get): ?string => $get('status')
+                                                fn (Forms\Get $get): ?string => $get('status')
                                                 ? 'The service is currently marked as closed. You can also add a custom closing message.'
                                                 : 'The restaurant is currently open. You can click the toggle button to mark it as closed.')
                                             ->onIcon('heroicon-o-lock-closed')
@@ -1166,7 +1176,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('status_msg')
                                             ->label('Closure Message')
                                             ->placeholder('Type a message for customers regarding the closure.')
-                                            ->visible(fn(Forms\Get $get): bool => $get('status')),
+                                            ->visible(fn (Forms\Get $get): bool => $get('status')),
                                     ]),
                                 Forms\Components\Section::make('Online Order')
                                     ->description('Set the availability of online orders and communicate any changes.')
@@ -1175,10 +1185,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('online_order_status')
                                             ->label(
-                                                fn(Forms\Get $get): string => $get('online_order_status') ? 'Open for Online Orders' : 'Closed for Online Orders'
+                                                fn (Forms\Get $get): string => $get('online_order_status') ? 'Open for Online Orders' : 'Closed for Online Orders'
                                             )
                                             ->helperText(
-                                                fn(Forms\Get $get): string => $get('online_order_status')
+                                                fn (Forms\Get $get): string => $get('online_order_status')
                                                 ? 'The restaurant is open for online orders. Click the toggle button to mark it as closed.'
                                                 : 'The restaurant is currently closed for online orders. Toggle on to allow orders again. You can also add a custom closing message.'
                                             )
@@ -1190,7 +1200,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('online_order_msg')
                                             ->label('Order Message')
                                             ->placeholder('Type a message for customers regarding closing online orders.')
-                                            ->hidden(fn(Forms\Get $get): bool => $get('online_order_status')),
+                                            ->hidden(fn (Forms\Get $get): bool => $get('online_order_status')),
                                     ]),
                                 Forms\Components\Section::make('Reservation')
                                     ->description('Control the reservation status and provide necessary information.')
@@ -1199,10 +1209,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('reservation_status')
                                             ->label(
-                                                fn(Forms\Get $get): string => $get('reservation_status') ? 'Open for Reservations' : 'Closed for Reservations'
+                                                fn (Forms\Get $get): string => $get('reservation_status') ? 'Open for Reservations' : 'Closed for Reservations'
                                             )
                                             ->helperText(
-                                                fn(Forms\Get $get): string => $get('reservation_status')
+                                                fn (Forms\Get $get): string => $get('reservation_status')
                                                 ? 'The restaurant is open for reservations. Click the toggle button to mark it as closed for new reservations.'
                                                 : 'The restaurant is currently closed for reservations. Toggle off to allow reservations again. You can also add a custom closing message.'
                                             )
@@ -1214,7 +1224,7 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('reservation_msg')
                                             ->label('Reservation Closing Message')
                                             ->placeholder('Type a message for customers regarding closing reservations.')
-                                            ->hidden(fn(Forms\Get $get): bool => $get('reservation_status')),
+                                            ->hidden(fn (Forms\Get $get): bool => $get('reservation_status')),
                                     ]),
                                 Forms\Components\Section::make('Shutdown')
                                     ->description('Manage the restaurant shutdown process and communicate with customers.')
@@ -1223,10 +1233,10 @@ class RestaurantDetails extends Page
                                     ->schema([
                                         Forms\Components\Toggle::make('shutdown_status')
                                             ->label(
-                                                fn(Forms\Get $get): string => $get('shutdown_status') ? 'Shutdown' : 'Operational'
+                                                fn (Forms\Get $get): string => $get('shutdown_status') ? 'Shutdown' : 'Operational'
                                             )
                                             ->helperText(
-                                                fn(Forms\Get $get): string => $get('shutdown_status')
+                                                fn (Forms\Get $get): string => $get('shutdown_status')
                                                 ? 'The restaurant is currently shut down. Toggle off to resume operations. You can also add a custom shutdown message.'
                                                 : 'The restaurant is operational. Click the toggle button to mark it as shut down.'
                                             )
@@ -1238,12 +1248,12 @@ class RestaurantDetails extends Page
                                         Forms\Components\RichEditor::make('shutdown_msg')
                                             ->label('Shutdown Message')
                                             ->placeholder('Type a message for customers regarding the shutdown.')
-                                            ->hidden(fn(Forms\Get $get): bool => !$get('shutdown_status')),
+                                            ->hidden(fn (Forms\Get $get): bool => ! $get('shutdown_status')),
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make('Other Details')
                             ->id('other-details')
-                            ->visible(fn() => $this->tabQuery == '-other-details-tab')
+                            ->visible(fn () => $this->tabQuery == '-other-details-tab')
                             ->schema([
                                 Forms\Components\Repeater::make('other_details')
                                     ->hiddenLabel()
@@ -1261,7 +1271,7 @@ class RestaurantDetails extends Page
                     ]),
 
                 Forms\Components\Section::make('Contribution Log')
-                    ->hidden(fn() => empty($this->record))
+                    ->hidden(fn () => empty($this->record))
                     ->columns(['lg' => 4])
                     ->collapsible()
                     ->collapsed()
@@ -1269,13 +1279,13 @@ class RestaurantDetails extends Page
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(): ?string => $this->record?->updater?->name),
+                            ->content(fn (): ?string => $this->record?->updater?->name),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(): ?string => $this->record?->updated_at?->diffForHumans()),
+                            ->content(fn (): ?string => $this->record?->updated_at?->diffForHumans()),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(): ?string => $this->record?->creator?->name),
+                            ->content(fn (): ?string => $this->record?->creator?->name),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(): ?string => $this->record?->created_at?->toFormattedDateString()),
+                            ->content(fn (): ?string => $this->record?->created_at?->toFormattedDateString()),
                     ]),
 
             ]);

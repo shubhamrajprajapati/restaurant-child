@@ -4,6 +4,8 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Pages\HolidayMessagePage;
 use App\Filament\Pages\HomePageEdit;
+use App\Filament\Pages\OpeningHourPage;
+use App\Filament\Pages\ReservationSettingPage;
 use App\Filament\Pages\RestaurantDetails;
 use App\Filament\Pages\RollingMessagePage;
 use App\Filament\Pages\TimeZonePage;
@@ -31,14 +33,14 @@ class MenuStatsOverview extends BaseWidget
 
             ['label' => 'Rolling Message', 'icon' => 'tv', 'design' => 'bg-gradient-cursor-design-2', 'url' => RollingMessagePage::getUrl()],
             ['label' => 'Reviews', 'icon' => 'star', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-testimonials-tab'])],
-            ['label' => 'Opening Hours', 'icon' => 'clock', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Opening Hours', 'icon' => 'clock', 'design' => 'bg-gradient-cursor-design-2', 'url' => OpeningHourPage::getUrl()],
 
             ['label' => 'Meta Details', 'icon' => 'code-bracket', 'design' => 'bg-gradient-cursor-design-1', 'url' => RestaurantDetails::getUrl(['tab' => '-meta-details-tab'])],
             ['label' => 'Create Categories', 'icon' => 'squares-plus', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
             ['label' => 'Menu Special Options', 'icon' => 'list-bullet', 'design' => 'bg-gradient-cursor-design-1', 'url' => null],
 
             ['label' => 'Create Menu', 'icon' => 'table-cells', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
-            ['label' => 'Reservation Settings', 'icon' => 'wrench', 'design' => 'bg-gradient-cursor-design-2', 'url' => null],
+            ['label' => 'Reservation Setting', 'icon' => 'wrench', 'design' => 'bg-gradient-cursor-design-2', 'url' => ReservationSettingPage::getUrl()],
             ['label' => 'Social Media Icons', 'icon' => 'squares-2x2', 'design' => 'bg-gradient-cursor-design-2', 'url' => RestaurantDetails::getUrl(['tab' => '-social-media-links-tab'])],
 
             ['label' => 'Color Themes', 'icon' => 'swatch', 'design' => 'bg-gradient-cursor-design-1', 'url' => ColorThemeResource::getUrl()],
@@ -59,7 +61,7 @@ class MenuStatsOverview extends BaseWidget
                 return Stat::make('', $this->getHtmlLabel($item['label']))
                     ->icon("heroicon-s-{$item['icon']}")
                     ->url($item['url'])
-                    ->extraAttributes(['class' => $item['design'] . " px-2 py-2"]);
+                    ->extraAttributes(['class' => $item['design'].' px-2 py-2']);
             })->all();
 
     }

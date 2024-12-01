@@ -64,7 +64,7 @@ class ColorThemeResource extends Resource
                                     ->afterStateHydrated(function (?string $state, Forms\Set $set, ?Model $record) {
                                         // Get the currently active theme
                                         $activeTheme = static::getModel()::whereActive(true)->first();
-                                        if (static::getModel()::count() === 1 && !$state && $activeTheme->id === $record?->id || $activeTheme === null) {
+                                        if (static::getModel()::count() === 1 && ! $state && $activeTheme->id === $record?->id || $activeTheme === null) {
                                             $set('active', true);
                                         }
                                     })
@@ -318,17 +318,17 @@ class ColorThemeResource extends Resource
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Placeholder::make('Updated By')
-                            ->content(fn(ColorTheme $record): string => ucwords($record->updater->name)),
+                            ->content(fn (ColorTheme $record): string => ucwords($record->updater->name)),
                         Forms\Components\Placeholder::make('Updated At')
-                            ->content(fn(ColorTheme $record): string => $record->updated_at->diffForHumans())
+                            ->content(fn (ColorTheme $record): string => $record->updated_at->diffForHumans())
                             ->hintIcon('heroicon-o-question-mark-circle')
-                            ->hintIconTooltip(fn(ColorTheme $record): string => $record->updated_at->format('M d, Y h:i a')),
+                            ->hintIconTooltip(fn (ColorTheme $record): string => $record->updated_at->format('M d, Y h:i a')),
                         Forms\Components\Placeholder::make('Created By')
-                            ->content(fn(ColorTheme $record): string => ucwords($record->creator->name)),
+                            ->content(fn (ColorTheme $record): string => ucwords($record->creator->name)),
                         Forms\Components\Placeholder::make('Created At')
-                            ->content(fn(ColorTheme $record): string => $record->created_at->toFormattedDateString())
+                            ->content(fn (ColorTheme $record): string => $record->created_at->toFormattedDateString())
                             ->hintIcon('heroicon-o-information-circle')
-                            ->hintIconTooltip(fn(ColorTheme $record): string => $record->created_at->format('M d, Y h:i a')),
+                            ->hintIconTooltip(fn (ColorTheme $record): string => $record->created_at->format('M d, Y h:i a')),
                     ]),
             ]);
     }
@@ -338,7 +338,7 @@ class ColorThemeResource extends Resource
         return $table
             ->striped()
             ->deferLoading()
-            ->recordClasses(fn(Model $record) => match ($record->active) {
+            ->recordClasses(fn (Model $record) => match ($record->active) {
                 false => 'opacity-30',
                 true => 'border-s-2 border-green-600 dark:border-green-300',
                 default => null,
@@ -348,17 +348,17 @@ class ColorThemeResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
-                    ->formatStateUsing(fn($state) => ucwords($state))
+                    ->formatStateUsing(fn ($state) => ucwords($state))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('active')
-                    ->disabled(fn($state) => static::getModel()::count() === 1 && $state || $state),
+                    ->disabled(fn ($state) => static::getModel()::count() === 1 && $state || $state),
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
 
                 // Group 1: Theme Colors
                 Tables\Columns\ColorColumn::make('theme_1')
                     ->label('Primary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -368,7 +368,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('theme_2')
                     ->label('Secondary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -378,7 +378,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('theme_3')
                     ->label('Tertiary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -388,7 +388,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('theme_4')
                     ->label('Quaternary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -399,7 +399,7 @@ class ColorThemeResource extends Resource
                 // Group 2: Light Theme Colors
                 Tables\Columns\ColorColumn::make('light_1')
                     ->label('Light Primary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -409,7 +409,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('light_2')
                     ->label('Light Secondary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -419,7 +419,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('light_3')
                     ->label('Light Tertiary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -429,7 +429,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('light_4')
                     ->label('Light Quaternary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -440,7 +440,7 @@ class ColorThemeResource extends Resource
                 // Group 3: Dark Theme Colors
                 Tables\Columns\ColorColumn::make('dark_1')
                     ->label('Dark Primary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -450,7 +450,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('dark_2')
                     ->label('Dark Secondary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -460,7 +460,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('dark_3')
                     ->label('Dark Tertiary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -470,7 +470,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('dark_4')
                     ->label('Dark Quaternary Theme Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -481,7 +481,7 @@ class ColorThemeResource extends Resource
                 // Group 4: Marquee Colors
                 Tables\Columns\ColorColumn::make('marquee_1')
                     ->label('Primary Marquee Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -491,7 +491,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('marquee_2')
                     ->label('Secondary Marquee Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -502,7 +502,7 @@ class ColorThemeResource extends Resource
                 // Group 5: Text Colors
                 Tables\Columns\ColorColumn::make('text_white')
                     ->label('White Text Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -512,7 +512,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('text_black')
                     ->label('Black Text Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -523,7 +523,7 @@ class ColorThemeResource extends Resource
                 // Group 6: Background Colors
                 Tables\Columns\ColorColumn::make('bg_white')
                     ->label('White BG Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -533,7 +533,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('bg_black')
                     ->label('Black BG Color')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -544,7 +544,7 @@ class ColorThemeResource extends Resource
                 // Group 7: Neutral Colors
                 Tables\Columns\ColorColumn::make('neutral_white')
                     ->label('Neutral White')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -554,7 +554,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('neutral_black')
                     ->label('Neutral Black')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -564,7 +564,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('neutral_gray')
                     ->label('Neutral Gray')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -574,7 +574,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('neutral_light_gray')
                     ->label('Light Gray')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -584,7 +584,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('neutral_x_light_gray')
                     ->label('Extra Light Gray')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -594,7 +594,7 @@ class ColorThemeResource extends Resource
 
                 Tables\Columns\ColorColumn::make('neutral_dark_gray')
                     ->label('Dark Gray')
-                    ->tooltip(fn(?string $state) => "Click to copy: {$state}")
+                    ->tooltip(fn (?string $state) => "Click to copy: {$state}")
                     ->alignCenter()
                     ->searchable()
                     ->sortable()
@@ -626,7 +626,7 @@ class ColorThemeResource extends Resource
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\Filter::make('active')
-                    ->query(fn(Builder $query) => $query->where('active', true)),
+                    ->query(fn (Builder $query) => $query->where('active', true)),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -639,7 +639,7 @@ class ColorThemeResource extends Resource
                     ->excludeAttributes(['type'])
                     ->beforeReplicaSaved(function (Model $replica): void {
                         // Runs after the replica has been replicated but before it is saved to the database.
-                        $replica->name = $replica->name . " Copied-" . date('dmyhims');
+                        $replica->name = $replica->name.' Copied-'.date('dmyhims');
                         $replica->active = true;
                         $replica->updated_by_user_id = auth()->id();
                         $replica->created_by_user_id = auth()->id();
@@ -650,7 +650,7 @@ class ColorThemeResource extends Resource
                     ->requiresConfirmation()
                     ->modalIcon('heroicon-o-swatch')
                     ->modalHeading(function (Model $record) {
-                        return new HtmlString("Copy <b>" . ucwords($record->name) . "</b>");
+                        return new HtmlString('Copy <b>'.ucwords($record->name).'</b>');
                     })
                     ->successNotification(
                         Notification::make()

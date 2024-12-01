@@ -25,7 +25,7 @@ class RollingMessageFactory extends Factory
             'marquee_status' => true,
             'active_marquee_no' => 2,
             'marquee_1' => $this->faker->sentence(),
-            'marquee_2' => "Welcome to " . config('app.name') . " | You can change this rolling message from the admin panel if you are an admin.",
+            'marquee_2' => 'Welcome to '.config('app.name').' | You can change this rolling message from the admin panel if you are an admin.',
             'marquee_3' => $this->faker->sentence(),
             'holiday_marquee_status' => false,
             'holiday_marquee' => $this->faker->sentence(),

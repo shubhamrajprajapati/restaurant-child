@@ -13,7 +13,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class ColorTheme extends Model implements Sortable
 {
-    use HasFactory, SoftDeletes, SortableTrait, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes, SortableTrait;
 
     /**
      * The table associated with the model.
@@ -93,8 +93,6 @@ class ColorTheme extends Model implements Sortable
 
     /**
      * Relationship with the restaurant.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function restaurant(): BelongsTo
     {
@@ -103,8 +101,6 @@ class ColorTheme extends Model implements Sortable
 
     /**
      * Relationship with the user who created this theme.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function creator(): BelongsTo
     {
@@ -113,8 +109,6 @@ class ColorTheme extends Model implements Sortable
 
     /**
      * Relationship with the user who last updated this theme.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function updater(): BelongsTo
     {
@@ -127,7 +121,7 @@ class ColorTheme extends Model implements Sortable
      * - Access `$model->key` to get the original color value.
      * - Access `$model->rkey` to get the reversed color using the helper function.
      *
-     * @param string $key The attribute being accessed.
+     * @param  string  $key  The attribute being accessed.
      * @return string|null The original or reversed color value.
      */
     public function __get($key)
@@ -155,15 +149,15 @@ class ColorTheme extends Model implements Sortable
         static::saving(function (self $colorTheme) {
             // If no records exist and the current record is being created with active = false,
             // throw an exception because the first record must have active = true.
-            if (self::count() === 0 && !$colorTheme->active) {
+            if (self::count() === 0 && ! $colorTheme->active) {
                 throw new \Exception('The first color theme must be active.');
             }
 
             // If the color theme already exists and we're trying to set active to false
             // while there is only one record in the table, throw an exception
-            if ($colorTheme->exists && !$colorTheme->active && self::count() === 1) {
+            if ($colorTheme->exists && ! $colorTheme->active && self::count() === 1) {
                 throw new \Exception('Deactivation of the only color theme is not allowed. '
-                    . 'There must be at least one active color theme in the system.');
+                    .'There must be at least one active color theme in the system.');
             }
 
             // Deactivate all other themes when setting the current theme to active

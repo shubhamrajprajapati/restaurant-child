@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum ColorThemeTypeEnum: int implements HasLabel, HasColor, HasIcon
+enum ColorThemeTypeEnum: int implements HasColor, HasIcon, HasLabel
 {
     case DEFAULT = 0;
     case CUSTOM = 1;
@@ -49,7 +49,7 @@ enum ColorThemeTypeEnum: int implements HasLabel, HasColor, HasIcon
     /**
      * Returns the color associated with the color theme type.
      */
-    public function getColor(): string | array | null
+    public function getColor(): string|array|null
     {
         return match ($this) {
             self::DEFAULT => 'gray',
