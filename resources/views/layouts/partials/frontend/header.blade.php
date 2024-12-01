@@ -1,5 +1,3 @@
-@props(['metadata'])
-
 <header class="displayinpc">
     <div class="header_gap">
         <nav class="navbar fixed-top navbar-expand-lg navbar-light">
@@ -14,7 +12,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="res_navbar">
                     <ul class="navbar-nav ms-auto">
-                        @include('layouts.partials.frontend.navbar-items', compact('metadata'))
+                        @include('layouts.partials.frontend.navbar-items')
                     </ul>
                 </div>
             </div>

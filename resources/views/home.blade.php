@@ -1,4 +1,4 @@
-<x-frontend-layout :$metadata :$socialMedia :$colorTheme :$homePageData :$reservationSetting>
+<x-frontend-layout>
 
     @push('styles')
         <style>

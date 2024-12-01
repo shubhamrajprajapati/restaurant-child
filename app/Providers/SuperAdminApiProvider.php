@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Exceptions\ApiDataException;
+use App\Models\ColorTheme;
 use App\Models\ReservationSetting;
+use App\Services\PageEditService;
+use App\Services\RestaurantService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -26,13 +29,41 @@ class SuperAdminApiProvider extends ServiceProvider
 
         // Ensure the API data exists and cache it if it does
         $apiData = $this->fetchApiData();
+        $reservationSetting = ReservationSetting::whereActive(true)->first();
+        $colorTheme = ColorTheme::whereActive(true)->first();
+
+        $restaurantService = new RestaurantService;
+        $restaurantData = $restaurantService->getRestaurantData();
+     
+        $rollingMessage = $restaurantService->getRollingMessage();
+        $testimonials = $restaurantService->getTestimonialsData($restaurantData);
+        $metadata = $restaurantService->getMetaDataDetails($restaurantData);
+        $socialMedia = $restaurantService->getSocialMediaDetails($restaurantData);
+
+        $homePageData = new PageEditService;
+        $homePageData = $homePageData->getHomePageData();
 
         // Cache the data for 1 minute
         Cache::put('super_admin_api_data', $apiData, 60);
+        Cache::put('reservation_setting', $reservationSetting, 60);
+        Cache::put('color_theme', $colorTheme, 60);
+        Cache::put('restaurant_data', $restaurantData, 60);
+        Cache::put('rolling_message', $rollingMessage, 60);
+        Cache::put('testimonials', $testimonials, 60);
+        Cache::put('metadata', $metadata, 60);
+        Cache::put('social_media', $socialMedia, 60);
+        Cache::put('home_page_data', $homePageData, 60);
 
         // Share the data globally in all views
         View::share('superAdminApiData', $apiData);
-        View::share('reservationSetting', ReservationSetting::whereActive(true)->first());
+        View::share('reservationSetting', $reservationSetting);
+        View::share('colorTheme', $colorTheme);
+        View::share('restaurantData', $restaurantData);
+        View::share('rollingMessage', $rollingMessage);
+        View::share('testimonials', $testimonials);
+        View::share('metadata', $metadata);
+        View::share('socialMedia', $socialMedia);
+        View::share('homePageData', $homePageData);
     }
 
     /**

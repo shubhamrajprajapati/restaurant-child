@@ -26,17 +26,6 @@ class RestaurantController extends Controller
             return view('layouts.partials.close-restaurant', ['data' => $restaurantCloseInfo]);
         }
 
-        $rollingMessage = $this->restaurantService->getRollingMessage();
-        $testimonials = $this->restaurantService->getTestimonialsData($data);
-
-        $metadata = $this->restaurantService->getMetaDataDetails($data);
-        $socialMedia = $this->restaurantService->getSocialMediaDetails($data);
-
-        $homePageData = new PageEditService;
-        $homePageData = $homePageData->getHomePageData();
-
-        $colorTheme = ColorTheme::whereActive(true)->first();
-
-        return view('home', compact('apiData', 'data', 'rollingMessage', 'homePageData', 'testimonials', 'metadata', 'socialMedia', 'colorTheme'));
+        return view('home', compact('apiData', 'data'));
     }
 }

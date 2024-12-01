@@ -1,5 +1,3 @@
-@props(['colorTheme'])
-
 <?php
 // Group 1
 $tc1 = $colorTheme?->theme_1;

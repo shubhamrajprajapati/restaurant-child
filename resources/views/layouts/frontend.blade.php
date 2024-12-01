@@ -1,10 +1,8 @@
-@props(['metadata', 'socialMedia', 'colorTheme'])
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    @include('layouts.partials.frontend.partials.color-theme-data', compact('colorTheme'))
+    @include('layouts.partials.frontend.partials.color-theme-data')
     @include('layouts.partials.frontend.head')
     @stack('styles')
 </head>
@@ -18,7 +16,7 @@
         </marquee>
     @endisset(!empty($) && !empty($rollingMessage->contents))
 
-    @include('layouts.partials.frontend.header', compact('metadata'))
+    @include('layouts.partials.frontend.header')
 
     <!--HEADER END-->
 
