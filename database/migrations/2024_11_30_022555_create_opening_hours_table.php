@@ -21,7 +21,7 @@ return new class extends Migration
             $table->time('monday_end_time_1');
             $table->time('monday_start_time_2');
             $table->time('monday_end_time_2');
-            $table->boolean('monday_holiday')->default(false);
+            $table->boolean('monday_open')->default(false);
 
             // Tuesday
             $table->string('tuesday_name')->default('Tuesday');
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->time('tuesday_end_time_1');
             $table->time('tuesday_start_time_2');
             $table->time('tuesday_end_time_2');
-            $table->boolean('tuesday_holiday')->default(false);
+            $table->boolean('tuesday_open')->default(false);
 
             // Wednesday
             $table->string('wednesday_name')->default('Wednesday');
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->time('wednesday_end_time_1');
             $table->time('wednesday_start_time_2');
             $table->time('wednesday_end_time_2');
-            $table->boolean('wednesday_holiday')->default(false);
+            $table->boolean('wednesday_open')->default(false);
 
             // Thursday
             $table->string('thursday_name')->default('Thursday');
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->time('thursday_end_time_1');
             $table->time('thursday_start_time_2');
             $table->time('thursday_end_time_2');
-            $table->boolean('thursday_holiday')->default(false);
+            $table->boolean('thursday_open')->default(false);
 
             // Friday
             $table->string('friday_name')->default('Friday');
@@ -53,7 +53,7 @@ return new class extends Migration
             $table->time('friday_end_time_1');
             $table->time('friday_start_time_2');
             $table->time('friday_end_time_2');
-            $table->boolean('friday_holiday')->default(false);
+            $table->boolean('friday_open')->default(false);
 
             // Saturday
             $table->string('saturday_name')->default('Saturday');
@@ -61,7 +61,7 @@ return new class extends Migration
             $table->time('saturday_end_time_1');
             $table->time('saturday_start_time_2');
             $table->time('saturday_end_time_2');
-            $table->boolean('saturday_holiday')->default(false);
+            $table->boolean('saturday_open')->default(false);
 
             // Sunday
             $table->string('sunday_name')->default('Sunday');
@@ -69,7 +69,7 @@ return new class extends Migration
             $table->time('sunday_end_time_1');
             $table->time('sunday_start_time_2');
             $table->time('sunday_end_time_2');
-            $table->boolean('sunday_holiday')->default(false);
+            $table->boolean('sunday_open')->default(false);
 
             // Additional fields
             $table->text('message')->nullable();
